@@ -136,12 +136,11 @@ kable(data.frame("Aston_Villa" = round(x[1], 3),  "Arsenal" = round(x[2],3)))
 ```
 
 
-Method - Step 2 (Estimating Probabilities of Match results)
+Method - Step 1 (Estimating Probabilities of Match results)
 ========================================================
 - Once we calculate the expected values, calculating probabilities of match results is quite simple
 - In order to remain realistic, we only computed probabilities of match results for results that included up to 9 goals (most ever scored in a Premier League game)
 
-<<<<<<< HEAD
 ```{r, echo = FALSE, figures-side, fig.show="hold", fig.align = "center"}
 vil <- x[1]
 ars <- x[2]
@@ -151,9 +150,16 @@ kable(data.frame("outcome" = c("0-0", "1-0", "0-1", "1-1", "2-2"),
                                    (dpois(1, vil) * dpois(1, ars)), (dpois(2, vil) * dpois(2, ars)))))
 
 kable(data.frame("outcome" = c("3-2", "2-3", "5-0", "0-5", "9-0"),
-                 "probability" = c((dpois(3, vil) * dpois(2, ars)), (dpois(2, vil) * dpois(3, ars)), (dpois(5, vil) * dpois(0, ars)), 
-                                    (dpois(0, vil) * dpois(5, ars)), (dpois(9, vil) * dpois(0, ars)))))
-=======
+                 "probability" = c((dpois(3, vil) * dpois(2, ars)), (dpois(2, vil) * dpois(3, ars)), 
+                                   (dpois(5, vil) * dpois(0, ars)), (dpois(0, vil) * dpois(5, ars)), 
+                                   (dpois(9, vil) * dpois(0, ars)))))
+
+```
+
+Method - Step 2 (Monte Carlo Simulation)
+========================================================
+- First step requires calculating league standings up to the game of interest
+
 ```{r, echo = FALSE}
 #League Table Caculator
 
@@ -230,7 +236,7 @@ get_position <- function(table, team) {
 }
 
 mc_step2 <- function(match_num) {
-  m <- 100 #Number of times to run it. 
+  m <- 30 #Number of times to run it. 
   win_stayup <- 0
   win_relegated <- 0
   
@@ -319,12 +325,21 @@ mc_step2 <- function(match_num) {
 
 result <- mc_step2(368)
 
-result
->>>>>>> 944e310e239d81d7abc47b893f8f34f59d3d71c7
-
+tail(league_table(368))
 ```
 
 
+Method - Step 2 (Monte Carlo Simulation)
+========================================================
+- Once we have those standings, we can them simulate the game of the interest, and the remainder of the season using probabilites from part 1
+- Must remember to keep track of results of game of interest, and update table after each game
+
+```{r, echo = FALSE, fig.align = "center"}
+kable(data.frame("Result" = c("win", "tie", "loss", "sum"),
+                 "Stay-Up" = c(result[1], result[5], result[3], result[1] + result[3] + result[5]),
+                 "Relegated" = c(result[2], result[6], result[4], result[2] + result[4] + result[6]),
+                 "sum" = c(result[1] + result[2], result[5] + result [6], result[3] + result[4], 30)))
+```
 
 Method - Step 3
 ========================================================
