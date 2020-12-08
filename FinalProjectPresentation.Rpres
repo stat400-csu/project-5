@@ -6,7 +6,13 @@ autosize: true
 
 Introduction: Home Field Advantage
 ========================================================
-- In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
+<style>
+.reveal .slides section .slideContent{
+    font-size: 16pt;
+}
+</style>
+- In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. 
+- Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
 
 Introduction: The Premier League
 ========================================================
