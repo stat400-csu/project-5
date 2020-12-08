@@ -11,8 +11,14 @@ Introduction: Home Field Advantage
     font-size: 16pt;
 }
 </style>
-- In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. 
-- Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
+
+Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
+
+```{r, echo=FALSE, out.height="50%", out.width = "50%", fig.align = "center", fig.cap="Premier League"}
+knitr::include_graphics("images/EmptyStadium.jpg")
+knitr::include_graphics("images/HomeFieldAdvantageGraph.png")
+```
+
 
 Introduction: The Premier League
 ========================================================
@@ -30,6 +36,8 @@ Introduction: The Premier League
 ```{r, echo=FALSE, out.height="50%", out.width = "50%", fig.align = "center", fig.cap="Premier League"}
 knitr::include_graphics("images/PL_crests.png")
 ```
+
+
 Literature
 ========================================================
 This paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. Simply put, match
