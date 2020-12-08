@@ -20,11 +20,11 @@ Introduction: The Premier League
 
 Literature
 ========================================================
-This paper is based on and will expand upon the article published by Jiri?? Lahvicka which is centered around a new method for determining match importance. Simply put, match
+This paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. Simply put, match
 importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance
 is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize
 and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte
-Carlo simulation. Where Lahvicka used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19
+Carlo simulation. Where Lahvička used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19
 pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven
 procedure will hold true for sporting events in empty stadiums.
 
@@ -57,22 +57,18 @@ any and all fanfare.
 
 Method - Step 1
 ========================================================
-Estimating Proabilities of Match results
+Estimating Probabilities of Match results
+- Expected goals for week 37 match:Aston Villa VS Arsenal
 
-Method - Step 2
-========================================================
-Monte Carlo Method for Prediction results
-
-Estimating Proabilities of Match results
-- Expected goals for week 30 match: Chelsea vs Sheffield Utd: 
-
-```{r Step 1, echo=FALSE }
+```{r Step1, echo = FALSE}
 library(ggplot2)
 library(readr)
 library(dplyr)
 library(tidyverse)
 
-#Step One
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Expected Goals
 
 # importing game data for 19-20 season
 results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
@@ -118,32 +114,126 @@ expected_goals <- function(home, away, matchday) {
   c(home_expected/19, away_expected/19)
 }
 
-#kable(expected_goals("Chelsea", "Sheffield Utd", 30))
-expected_goals("Chelsea", "Sheffield Utd", 30)
+expected_goals("Aston Villa", "Arsnel", 37)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#League Table Caculator
+
+
+# importing game data from 19-20 season
+results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
+results_1920 <- results_1920 %>% select(Round.Number, Date, Home.Team, Away.Team, Home, Away)
+#results_1920$ID <- seq.int(nrow(results_1920)) # giving each game an ID
+
+
+# importing table format
+table_1920 <- read.csv("data/19_20_PL_table.csv")
+
+# function that calculates league table up to right before the inputted match
+league_table <- function(x){}
+games <- seq(1, 380)
+
+
+for (j in games) {
+  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
+  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
+  
+  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF + results_1920[j,]$Home
+  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA + results_1920[j,]$Away
+  
+  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF + results_1920[j,]$Away
+  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA + results_1920[j,]$Home
+  
+  if (results_1920[j,]$Home > results_1920[j,]$Away) { # home win
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 3
+  }
+  
+  if (results_1920[j,]$Home < results_1920[j,]$Away) { # away win
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 3
+  }
+  
+  if (results_1920[j,]$Home == results_1920[j,]$Away) { # tie
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 1
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 1
+  }
+}
+
+table_1920$GP <= NULL
+table_1920 <- table_1920 %>% mutate(GD = GF - GA)
+table_1920 <- table_1920[order(-table_1920$P, -table_1920$GD),]
+
+kable(table_1920)
+```
+
+
+
+
+Method - Step 2
+========================================================
+Monte Carlo Method for Prediction results
+ 
+
+```{r Step2, echo=FALSE }
+#Monte Carlo Estimation of Final Ranks
+
+mc_step2 <- function(home, away, matchday){
+  m <- 2000 #Number of times to run it. 
+  home_win <-0
+  home_loss<-0
+  home_tie<-0
+  
+  #compute estimate
+  for (i in seq_len(m)) {
+    x <-expected_goals("Aston Villa", "Arsnel", 37)
+    
+    #keep track of win/tie/loss (Contengcy table)
+    if (x[1] > x[2]){ # home win
+      home_win <- home_win + 1
+    }
+    
+    if (x[1] < x[2]){ # away win
+      home_loss <- home_loss + 1
+    } 
+    
+    if (x[1] == x[2]){ # tie
+      home_tie <- home_tie + 1
+    } # tie
+    #keep track of win/tie/loss (Contengcy table)
+    c_table <- cbind(home_win, home_loss, home_tie)
+  }
+}
+
+#start_league_table <- league_table() #J will create function for this
+mc_step2("Aston Villa", "Arsnel", 37)
+#end_league_table <- league_table() #J will create function for this
+
 ```
 
 Method - Step 3
 ========================================================
 Calculating Results-Outcome Association:
-or who's going to get relegated if they fail
+or "Who is going to get relegated if they fail to achive a good enough score"
 
-```{r Step 3}
+```{r Step3, echo=FALSE}
 
 ```
 
 Verification
 ========================================================
-What are this week's results vs. What we predicted? 
-- Should we make a table for this?
+What are the end of season results vs. What we predicted from week 37? 
+
 
 Conclusion
 ========================================================
 Conclusion 
 - Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
 
+
+
 Citations
 ========================================================
 
+- Bois, Jon. “Home Advantage In Sports: A Scientific Study Of How Much It Affects&nbsp;Winning.” SBNation.com, SBNation.com, 19 Jan. 2011, www.sbnation.com/2011/1/19/1940438/home-field-advantage-sports-stats-data. 
 - “Home Advantage.” Wikipedia, Wikimedia Foundation, 14 Nov. 2020, en.wikipedia.org/wiki/Home_advantage.
 - Lahvička, Jiří. “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League.” Journal of Sports Economics, vol. 16, no. 4, 2015, pp. 390–409., doi:10.1177/1527002513490172.
 
