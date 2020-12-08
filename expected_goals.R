@@ -44,7 +44,8 @@ expected_goals <- function(home, away, matchday) {
   home_expected <- (home_scored + away_conceded) / 2
   away_expected <- (away_scored + home_conceded) / 2
   
-  c(home_expected, away_expected)
+  c(home_expected/19, away_expected/19)
 }
 
-expected_goals("Chelsea", "Sheffield Utd", 30)
+expected_goals("Arsenal", "Aston Villa", 37) # Aston Villa vs. Arsenal (week 37)
+

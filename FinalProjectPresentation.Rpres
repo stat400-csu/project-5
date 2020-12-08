@@ -84,6 +84,7 @@ lambda_away = (average goals scored by away team + average goals conceded by hom
 ```{r, echo = FALSE}
 library(dplyr)
 library(knitr)
+library(gridExtra)
 
 # importing game data for 19-20 season
 results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
@@ -140,7 +141,17 @@ Method - Step 1 (Estimating Probabilities of Match results)
 - Once we calculate the expected values, calculating probabilites of match results is quite simple
 - In order to remain realistic, we only computed probabilites of match results for results that included up to 9 goals (most ever scored in a Premier League game)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, figures-side, fig.show="hold", fig.align = "center"}
+vil <- x[1]
+ars <- x[2]
+
+kable(data.frame("outcome" = c("0-0", "1-0", "0-1", "1-1", "2-2"),
+                 "probability" = c((dpois(0, vil) * dpois(0, ars)), (dpois(1, vil) * dpois(0, ars)), (dpois(0, vil) * dpois(1, ars)), 
+                                   (dpois(1, vil) * dpois(1, ars)), (dpois(2, vil) * dpois(2, ars)))))
+
+kable(data.frame("outcome" = c("3-2", "2-3", "5-0", "0-5", "9-0"),
+                 "probability" = c((dpois(3, vil) * dpois(2, ars)), (dpois(2, vil) * dpois(3, ars)), (dpois(5, vil) * dpois(0, ars)), 
+                                    (dpois(0, vil) * dpois(5, ars)), (dpois(9, vil) * dpois(0, ars)))))
 
 ```
 
