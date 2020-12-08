@@ -11,8 +11,14 @@ Introduction: Home Field Advantage
     font-size: 16pt;
 }
 </style>
-- In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. 
-- Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
+
+Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
+
+```{r, echo=FALSE, out.height="50%", out.width = "50%", fig.align = "center", fig.cap="Premier League"}
+knitr::include_graphics("images/EmptyStadium.jpg")
+knitr::include_graphics("images/HomeFieldAdvantageGraph.png")
+```
+
 
 Introduction: The Premier League
 ========================================================
@@ -30,33 +36,32 @@ Introduction: The Premier League
 ```{r, echo=FALSE, out.height="50%", out.width = "50%", fig.align = "center", fig.cap="Premier League"}
 knitr::include_graphics("images/PL_crests.png")
 ```
+
+
 Literature
 ========================================================
-This paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. Simply put, match
-importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance
-is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize
-and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte
-Carlo simulation. Where Lahvička used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19
-pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven
-procedure will hold true for sporting events in empty stadiums.
+<style>
+.reveal .slides section .slideContent{
+    font-size: 16pt;
+}
+</style>
+
+- This paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. 
+- Simply put, match importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season.
+- The method will calculate the probabilities of all match result-season outcome combinations through a Monte Carlo simulation.
 
 Data
 ========================================================
-In order to show the specified method is functional and accurate, we've pulled data from the English premier league official results website over the course of the
-2019-2020 season, and the 2020-2021 season. The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the
-three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match
-dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that
-time period, and Manchester United who has only played 18 games over that time period. 
+<style>
+.reveal .slides section .slideContent{
+    font-size: 16pt;
+}
+</style>
 
-The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express
-the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three
-columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team's opponent on that given
-day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple
-values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that
-teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this
-time span. 
-
-The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking
+- In order to show the specified method is functional and accurate, we've pulled data from the English premier league official results website over the course of the
+2019-2020 season, and the 2020-2021 season.  
+- The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. 
+- The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking
 any and all fanfare. 
 
 ```{r data, echo = TRUE}
@@ -344,13 +349,9 @@ kable(data.frame("Result" = c("win", "tie", "loss", "sum"),
 Method - Step 3
 ========================================================
 Calculating Results-Outcome Association:
-In step three of this method, a contingency table is created and used to calculate individual match importance. The variables in these tables consist of three rows indicating
-the amount of wins, losses, and draws recorded through simulating, and two columns indicating whether or not the result led to relegation. Each contingency table is specific to
-whichever team is being investigated on a particular date, and their desired season outcome based on that game. As stated earlier, the importance is based on the strength of
-the relationship between the match result and end of season outcome. The statistic chosen the represent this value is the Stuart Kendall Tau C, a measure of association between
-two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance. Continuing the investigation into the
-week 37 matchup of Aston Villa vs. Arsenal, a contingency table was created from the point of view for Aston Villa. The following are the respective contingency table and Stuart
-Kendall Tau C value:
+- In step three of this method, a contingency table is created and used to calculate individual match importance. 
+- Each contingency table is specific to whichever team is being investigated on a particular date, and their desired season outcome based on that game.
+- The statistic chosen to represent this value is the Stuart Kendall Tau C, a measure of association between two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance.
 
 ```{r Step3, echo=FALSE}
 m=30
