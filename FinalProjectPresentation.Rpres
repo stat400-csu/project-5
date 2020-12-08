@@ -150,15 +150,10 @@ Method - Step 1 (Estimating Probabilities of Match results)
 vil <- x[1]
 ars <- x[2]
 
-kable(data.frame("outcome" = c("0-0", "1-0", "0-1", "1-1", "2-2"),
+kable(data.frame("outcome" = c("0-0", "1-0", "0-1", "1-1", "2-2", "2-0", "0-2"),
                  "probability" = c((dpois(0, vil) * dpois(0, ars)), (dpois(1, vil) * dpois(0, ars)), (dpois(0, vil) * dpois(1, ars)), 
-                                   (dpois(1, vil) * dpois(1, ars)), (dpois(2, vil) * dpois(2, ars)))))
-
-kable(data.frame("outcome" = c("3-2", "2-3", "5-0", "0-5", "9-0"),
-                 "probability" = c((dpois(3, vil) * dpois(2, ars)), (dpois(2, vil) * dpois(3, ars)), 
-                                   (dpois(5, vil) * dpois(0, ars)), (dpois(0, vil) * dpois(5, ars)), 
-                                   (dpois(9, vil) * dpois(0, ars)))))
-
+                                   (dpois(1, vil) * dpois(1, ars)), (dpois(2, vil) * dpois(2, ars)), (dpois(2, vil) * dpois(0, ars)),
+                                   (dpois(0, vil) * dpois(2, ars)))))
 ```
 
 Method - Step 2 (Monte Carlo Simulation)
@@ -353,7 +348,70 @@ Calculating Results-Outcome Association:
 - Each contingency table is specific to whichever team is being investigated on a particular date, and their desired season outcome based on that game.
 - The statistic chosen to represent this value is the Stuart Kendall Tau C, a measure of association between two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance.
 
+
 ```{r Step3, echo=FALSE}
+library(DescTools)
+
+mc_step2 <- function(match_num) {
+  m <- 30 #Number of times to run it. 
+  home_win <-0
+  home_loss<-0
+  home_tie<-0
+  final_pos <- rep(NA, m)
+  
+  for (j in seq(1, m)) {
+    win <- 0
+    loss <- 0
+    tie <- 0
+    starting_table <- league_table(368)
+    for (i in seq(match_num, 380)) {
+        home <- results_1920[i,]$Home.Team
+        away <- results_1920[i,]$Away.Team
+        round <- results_1920[i,]$Round.Number
+  
+        x <- expected_goals(home, away, round)
+  
+        h_g <- rpois(1, x[1])
+        a_g <- rpois(1, x[2])
+  
+        if (i == match_num) {
+          if (h_g > a_g) {
+            win <- win + 1
+          }
+          if (h_g < a_g) {
+            loss <- loss + 1
+          }
+          if (h_g == a_g) {
+            tie = tie + 1
+          }
+        }
+  
+        if (h_g > a_g) {
+          starting_table <- update_table(starting_table, home, "win", h_g, a_g)
+          starting_table <- update_table(starting_table, away, "loss", a_g, h_g)
+        }
+  
+        if (h_g < a_g) {
+          starting_table <- update_table(starting_table, home, "loss", h_g, a_g)
+          starting_table <- update_table(starting_table, away, "win", a_g, h_g)
+        }
+  
+        if (h_g == a_g) {
+          starting_table <- update_table(starting_table, home, "tie", h_g, a_g)
+          starting_table <- update_table(starting_table, away, "tie", a_g, h_g)
+        }
+  
+    }
+    home_win <- home_win + win
+    home_loss <- home_loss + loss
+    home_tie <- home_tie + tie
+    final_pos[j] <- get_position(starting_table, "Aston Villa")
+  }
+  c(home_win, home_loss, home_tie, final_pos)
+}
+
+result <- mc_step2(368)
+
 m=30
 rankings = as.matrix(result)
 rankings1 = rankings[4:m+3,]
