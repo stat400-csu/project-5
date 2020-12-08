@@ -20,15 +20,32 @@ Introduction: The Premier League
 
 Literature
 ========================================================
-This paper is based on and will expand upon the article published by Jiri?? Lahvicka which is centered around a new method for determining match importance. Simply put, match importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte Carlo simulation. Where Lahvicka used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19 pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven procedure will hold true for sporting events in empty stadiums.
+This paper is based on and will expand upon the article published by Jiri?? Lahvicka which is centered around a new method for determining match importance. Simply put, match
+importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance
+is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize
+and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte
+Carlo simulation. Where Lahvicka used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19
+pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven
+procedure will hold true for sporting events in empty stadiums.
 
 Data
 ========================================================
-In order to show the specified method is functional and accurate, we've pulled data from the English premier league official results website over the course of the 2019-2020 season, and the 2020-2021 season. The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that time period, and Manchester United who has only played 18 games over that time period. 
+In order to show the specified method is functional and accurate, we've pulled data from the English premier league official results website over the course of the
+2019-2020 season, and the 2020-2021 season. The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the
+three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match
+dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that
+time period, and Manchester United who has only played 18 games over that time period. 
 
-The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team's opponent on that given day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this time span. 
+The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express
+the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three
+columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team's opponent on that given
+day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple
+values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that
+teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this
+time span. 
 
-The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking any and all fanfare. 
+The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking
+any and all fanfare. 
 
 ```{r data, echo = TRUE}
 
