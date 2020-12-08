@@ -67,20 +67,23 @@ any and all fanfare.
 ```
 
 
-Method - Step 1
+Method - Step 1 (Estimating Probabilities of Match results)
 ========================================================
-Estimating Probabilities of Match results
-- Expected goals for week 37 match:Aston Villa VS Arsenal
 
-```{r Step1, echo = FALSE}
-library(ggplot2)
-library(readr)
+- Necessary to estimate probabilites of results of all matches until the end of the season
+- Using past results (previous 19 games), we can estimate the number of goals scored by each team in match as independent poisson-distributed variables with the below expected values
+
+<center>
+
+lambda_home = (average goals scored by home team + average goals conceded by away team)/(2) 
+
+lambda_away = (average goals scored by away team + average goals conceded by home team)/(2)
+
+<center>
+
+```{r, echo = FALSE}
 library(dplyr)
-library(tidyverse)
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Expected Goals
+library(knitr)
 
 # importing game data for 19-20 season
 results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
@@ -126,100 +129,22 @@ expected_goals <- function(home, away, matchday) {
   c(home_expected/19, away_expected/19)
 }
 
-expected_goals("Aston Villa", "Arsnel", 37)
+x <- expected_goals("Aston Villa", "Arsenal", 37) # Aston Villa vs. Arsenal (week 37)
 
-#-------------------------------------------------------------------------------------------------------------------------------------------------
-#League Table Caculator
-
-
-# importing game data from 19-20 season
-results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
-results_1920 <- results_1920 %>% select(Round.Number, Date, Home.Team, Away.Team, Home, Away)
-#results_1920$ID <- seq.int(nrow(results_1920)) # giving each game an ID
-
-
-# importing table format
-table_1920 <- read.csv("data/19_20_PL_table.csv")
-
-# function that calculates league table up to right before the inputted match
-league_table <- function(x){}
-games <- seq(1, 380)
-
-
-for (j in games) {
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
-  
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF + results_1920[j,]$Home
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA + results_1920[j,]$Away
-  
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF + results_1920[j,]$Away
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA + results_1920[j,]$Home
-  
-  if (results_1920[j,]$Home > results_1920[j,]$Away) { # home win
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 3
-  }
-  
-  if (results_1920[j,]$Home < results_1920[j,]$Away) { # away win
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 3
-  }
-  
-  if (results_1920[j,]$Home == results_1920[j,]$Away) { # tie
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 1
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 1
-  }
-}
-
-table_1920$GP <= NULL
-table_1920 <- table_1920 %>% mutate(GD = GF - GA)
-table_1920 <- table_1920[order(-table_1920$P, -table_1920$GD),]
-
-kable(table_1920)
+kable(data.frame("Aston_Villa" = round(x[1], 3),  "Arsenal" = round(x[2],3)))
 ```
 
 
-
-
-Method - Step 2
+Method - Step 1 (Estimating Probabilities of Match results)
 ========================================================
-Monte Carlo Method for Prediction results
- 
+- Once we calculate the expected values, calculating probabilites of match results is quite simple
+- In order to remain realistic, we only computed probabilites of match results for results that included up to 9 goals (most ever scored in a Premier League game)
 
-```{r Step2, echo=FALSE }
-#Monte Carlo Estimation of Final Ranks
-
-mc_step2 <- function(home, away, matchday){
-  m <- 2000 #Number of times to run it. 
-  home_win <-0
-  home_loss<-0
-  home_tie<-0
-  
-  #compute estimate
-  for (i in seq_len(m)) {
-    x <-expected_goals("Aston Villa", "Arsnel", 37)
-    
-    #keep track of win/tie/loss (Contengcy table)
-    if (x[1] > x[2]){ # home win
-      home_win <- home_win + 1
-    }
-    
-    if (x[1] < x[2]){ # away win
-      home_loss <- home_loss + 1
-    } 
-    
-    if (x[1] == x[2]){ # tie
-      home_tie <- home_tie + 1
-    } # tie
-    #keep track of win/tie/loss (Contengcy table)
-    c_table <- cbind(home_win, home_loss, home_tie)
-  }
-}
-
-#start_league_table <- league_table() #J will create function for this
-mc_step2("Aston Villa", "Arsnel", 37)
-#end_league_table <- league_table() #J will create function for this
+```{r, echo = FALSE}
 
 ```
+
+
 
 Method - Step 3
 ========================================================
