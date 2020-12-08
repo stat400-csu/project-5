@@ -52,7 +52,7 @@ expected_goals <- function(home, away, matchday) {
   c(home_expected/19, away_expected/19)
 }
 
-expected_goals("Aston Villa", "Arsnel", 37)
+expected_goals("Aston Villa", "Arsenal", 37)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #League Table Caculator
@@ -68,85 +68,136 @@ results_1920 <- results_1920 %>% select(Round.Number, Date, Home.Team, Away.Team
 table_1920 <- read.csv("data/19_20_PL_table.csv")
 
 # function that calculates league table up to right before the inputted match
-league_table <- function(x){}
-games <- seq(1, 380)
-
-
-for (j in games) {
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
+league_table <- function(game_number) {
+  games <- seq(1, game_number - 1)
   
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF + results_1920[j,]$Home
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA + results_1920[j,]$Away
-  
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF + results_1920[j,]$Away
-  table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA + results_1920[j,]$Home
-  
-  if (results_1920[j,]$Home > results_1920[j,]$Away) { # home win
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 3
+  for (j in games) {
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
+    
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF + results_1920[j,]$Home
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA + results_1920[j,]$Away
+    
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF + results_1920[j,]$Away
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA + results_1920[j,]$Home
+    
+    if (results_1920[j,]$Home > results_1920[j,]$Away) { # home win
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 3
+    }
+    
+    if (results_1920[j,]$Home < results_1920[j,]$Away) { # away win
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 3
+    }
+    
+    if (results_1920[j,]$Home == results_1920[j,]$Away) { # tie
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 1
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 1
+    }
   }
   
-  if (results_1920[j,]$Home < results_1920[j,]$Away) { # away win
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 3
-  }
+  table_1920$GP <- NULL
+  table_1920 <- table_1920 %>% mutate(GD = GF - GA)
+  table_1920 <- table_1920[order(-table_1920$P, -table_1920$GD),]
+  rownames(table_1920) <- 1:nrow(table_1920)
   
-  if (results_1920[j,]$Home == results_1920[j,]$Away) { # tie
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 1
-    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 1
-  }
+  table_1920
 }
 
-table_1920$GP <= NULL
-table_1920 <- table_1920 %>% mutate(GD = GF - GA)
-table_1920 <- table_1920[order(-table_1920$P, -table_1920$GD),]
+# function that updates table
+update_table <- function(table, team, result, goals_for, goals_against) {
+  table[ table$Team == team,]$GF <- table[ table$Team == team,]$GF + goals_for
+  table[ table$Team == team,]$GA <- table[ table$Team == team,]$GA + goals_against
+  
+  if (result == "win") {
+    table[ table$Team == team,]$P <- table[ table$Team == team,]$P + 3
+    
+  }
+  
+  if (result == "tie") {
+    table[ table$Team == team,]$P <- table[ table$Team == team,]$P + 1
+  }
+  
+  table <- table %>% mutate(GD = GF - GA)
+  table <- table[order(-table$P, -table$GD),]
+  rownames(table) <- 1:nrow(table)
+  
+  table
+}
 
-kable(table_1920)
-
-
-
-
-
-
-
+# function that get's position of specific team in table
+get_position <- function(table, team) {
+  as.numeric(rownames(table[ table$Team == team,]))
+}
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 ## Step 2: MC Function
 
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------
-
-#Monte Carlo Estimation of Final Ranks
-
-mc_step2 <- function(home, away, matchday){
-  m <- 2000 #Number of times to run it. 
+mc_step2 <- function(match_num) {
+  m <- 5 #Number of times to run it. 
   home_win <-0
   home_loss<-0
   home_tie<-0
+  final_pos <- rep(NA, m)
   
-  #compute estimate
-  for (i in seq_len(m)) {
-    x <-expected_goals("Aston Villa", "Arsnel", 37)
+  for (j in seq(1, m)) {
+    win <- 0
+    loss <- 0
+    tie <- 0
+    starting_table <- league_table(368)
     
-    #keep track of win/tie/loss (Contengcy table)
-    if (x[1] > x[2]){ # home win
-      home_win <- home_win + 1
+    for (i in seq(match_num, 380)) {
+      home <- results_1920[i,]$Home.Team
+      away <- results_1920[i,]$Away.Team
+      round <- results_1920[i,]$Round.Number
+      
+      x <- expected_goals(home, away, round)
+      
+      h_g <- rpois(1, x[1])
+      a_g <- rpois(1, x[2])
+      
+      if (i == match_num) {
+        if (h_g > a_g) {
+          win <- win + 1
+        }
+        if (h_g < a_g) {
+          loss <- loss + 1
+        }
+        if (h_g == a_g) {
+          tie = tie + 1
+        }
+      }
+      
+      if (h_g > a_g) {
+        starting_table <- update_table(starting_table, home, "win", h_g, a_g)
+        starting_table <- update_table(starting_table, away, "loss", a_g, h_g)
+      }
+      
+      if (h_g < a_g) {
+        starting_table <- update_table(starting_table, home, "loss", h_g, a_g)
+        starting_table <- update_table(starting_table, away, "win", a_g, h_g)
+      }
+      
+      if (h_g == a_g) {
+        starting_table <- update_table(starting_table, home, "tie", h_g, a_g)
+        starting_table <- update_table(starting_table, away, "tie", a_g, h_g)
+      }
+      
     }
     
-    if (x[1] < x[2]){ # away win
-      home_loss <- home_loss + 1
-    } 
-    
-    if (x[1] == x[2]){ # tie
-      home_tie <- home_tie + 1
-    } # tie
-    #keep track of win/tie/loss (Contengcy table)
-    c_table <- cbind(home_win, home_loss, home_tie)
+    home_win <- home_win + win
+    home_loss <- home_loss + loss
+    home_tie <- home_tie + tie
+    final_pos[j] <- get_position(starting_table, "Aston Villa")
   }
+  
+  c(home_win, home_loss, home_tie, final_pos)
 }
 
-#start_league_table <- league_table() #J will create function for this
-mc_step2("Aston Villa", "Arsnel", 37)
-#end_league_table <- leuague_table() #J will create function for this
+result <- mc_step2(368)
+
+result
+
+
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
