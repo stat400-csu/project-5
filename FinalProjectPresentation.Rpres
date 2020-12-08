@@ -70,7 +70,7 @@ any and all fanfare.
 Method - Step 1 (Estimating Probabilities of Match results)
 ========================================================
 
-- Necessary to estimate probabilites of results of all matches until the end of the season
+- Necessary to estimate probabilities of results of all matches until the end of the season
 - Using past results (previous 19 games), we can estimate the number of goals scored by each team in match as independent poisson-distributed variables with the below expected values
 
 <center>
@@ -137,8 +137,8 @@ kable(data.frame("Aston_Villa" = round(x[1], 3),  "Arsenal" = round(x[2],3)))
 
 Method - Step 1 (Estimating Probabilities of Match results)
 ========================================================
-- Once we calculate the expected values, calculating probabilites of match results is quite simple
-- In order to remain realistic, we only computed probabilites of match results for results that included up to 9 goals (most ever scored in a Premier League game)
+- Once we calculate the expected values, calculating probabilities of match results is quite simple
+- In order to remain realistic, we only computed probabilities of match results for results that included up to 9 goals (most ever scored in a Premier League game)
 
 ```{r, echo = FALSE}
 
@@ -154,7 +154,7 @@ the amount of wins, losses, and draws recorded through simulating, and two colum
 whichever team is being investigated on a particular date, and their desired season outcome based on that game. As stated earlier, the importance is based on the strength of
 the relationship between the match result and end of season outcome. The statistic chosen the represent this value is the Stuart Kendall Tau C, a measure of association between
 two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance. Continuing the investigation into the
-week 37 matchup of Aston Villa vs. Arsenal, a contingency table was created from the point of view for Aston Villa. The follwing are the respective contingency table and Stuart
+week 37 matchup of Aston Villa vs. Arsenal, a contingency table was created from the point of view for Aston Villa. The following are the respective contingency table and Stuart
 Kendall Tau C value:
 
 ```{r Step3, echo=FALSE}
