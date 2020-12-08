@@ -133,17 +133,24 @@ get_position <- function(table, team) {
 ## Step 2: MC Function
 
 mc_step2 <- function(match_num) {
-  m <- 5 #Number of times to run it. 
-  home_win <-0
-  home_loss<-0
-  home_tie<-0
-  final_pos <- rep(NA, m)
+  m <- 100 #Number of times to run it. 
+  win_stayup <- 0
+  win_relegated <- 0
+  
+  lose_stayup <- 0
+  lose_relegated <- 0
+  
+  tie_stayup <- 0
+  tie_relegated <- 0
+  
+  final_pos <- NULL
   
   for (j in seq(1, m)) {
     win <- 0
     loss <- 0
     tie <- 0
     starting_table <- league_table(368)
+    result <- "result"
     
     for (i in seq(match_num, 380)) {
       home <- results_1920[i,]$Home.Team
@@ -157,13 +164,13 @@ mc_step2 <- function(match_num) {
       
       if (i == match_num) {
         if (h_g > a_g) {
-          win <- win + 1
+          result = "win"
         }
         if (h_g < a_g) {
-          loss <- loss + 1
+          result = "lose"
         }
         if (h_g == a_g) {
-          tie = tie + 1
+          result = "tie"
         }
       }
       
@@ -184,20 +191,38 @@ mc_step2 <- function(match_num) {
       
     }
     
-    home_win <- home_win + win
-    home_loss <- home_loss + loss
-    home_tie <- home_tie + tie
-    final_pos[j] <- get_position(starting_table, "Aston Villa")
+    final_pos <- get_position(starting_table, "Aston Villa")
+    
+    if (result == "win" & final_pos < 18) {
+      win_stayup <- win_stayup + 1
+    }
+    
+    if (result == "win" & final_pos >= 18) {
+      win_relegated <- win_relegated + 1
+    }
+    
+    if (result == "lose" & final_pos < 18) {
+      lose_stayup <- lose_stayup + 1
+    }
+    
+    if (result == "lose" & final_pos >= 18) {
+      lose_relegated <- lose_relegated + 1
+    }
+    
+    if (result == "tie" & final_pos < 18) {
+      tie_stayup <- tie_stayup + 1
+    }
+    
+    if (result == "tie" & final_pos >= 18) {
+      tie_relegated <- tie_relegated + 1
+    }
   }
-  
-  c(home_win, home_loss, home_tie, final_pos)
+  c(win_stayup, win_relegated, lose_stayup, lose_relegated, tie_stayup, tie_relegated)
 }
 
 result <- mc_step2(368)
 
 result
-
-
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------

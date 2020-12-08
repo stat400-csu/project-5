@@ -16,8 +16,20 @@ Introduction: Home Field Advantage
 
 Introduction: The Premier League
 ========================================================
+<style>
+.reveal .slides section .slideContent{
+    font-size: 24pt;
+}
+</style>
 
+- Top Soccer (Football) league in England
+- 20 teams that play each other twice throughout the season (August - May)
+- Key Outcomes -> Championship, Top 6 (European Competition), Bottom 3 (Relegation)
+- Last 9 matchdays of 19/20 season and first 10 matchdays of 20/21 season played without fans due to COVID-19
 
+```{r, echo=FALSE, out.height="50%", out.width = "50%", fig.align = "center", fig.cap="Premier League"}
+knitr::include_graphics("images/PL_crests.png")
+```
 Literature
 ========================================================
 This paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. Simply put, match
