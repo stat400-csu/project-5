@@ -3,6 +3,7 @@ library(readr)
 library(dplyr)
 library(tidyverse)
 library(knitr)
+library(DescTools)
 
 ## Step One
 #-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -227,6 +228,210 @@ result
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 ##Step 3
-#B will do with tau function
+m=30
+rankings = as.matrix(result)
+rankings1 = rankings[4:m+3,]
+
+relegated=0
+tracker = 0
+while(tracker < m-3){
+  if(rankings1[1]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[1]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[2]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[2]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[3]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[3]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[4]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[4]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[5]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[5]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[6]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[6]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[7]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[7]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[8]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[8]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[9]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[9]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[10]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[10]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[11]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[11]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[12]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[12]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[13]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[13]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[14]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[14]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[15]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[15]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[16]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[16]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[17]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[17]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[18]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[18]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[19]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[19]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[20]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[20]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[21]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[21]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[22]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[22]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[23]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[23]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[24]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[24]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[25]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[25]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[26]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[26]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[27]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[27]<=18){
+    tracker=tracker + 1
+  }
+}
+
+contingent = matrix(c(rankings[1]/m,0,rankings[3]/m,0,rankings[2]/m,relegated/(m-3)), ncol=2, byrow=TRUE)
+colnames(contingent) = c("no","yes")
+rownames(contingent) = c("win","draw","lose")
+contingent = as.table(contingent)
+contingent
+
+StuartTauC(contingent)
 
 #J will set up function to predict rest of season
