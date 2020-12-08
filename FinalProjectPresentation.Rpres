@@ -40,13 +40,15 @@ knitr::include_graphics("images/PL_crests.png")
 
 Literature
 ========================================================
-This paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. Simply put, match
-importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance
-is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize
-and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte
-Carlo simulation. Where Lahvička used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19
-pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven
-procedure will hold true for sporting events in empty stadiums.
+<style>
+.reveal .slides section .slideContent{
+    font-size: 16pt;
+}
+</style>
+
+- This paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. 
+- Simply put, match importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season.
+- The method will calculate the probabilities of all match result-season outcome combinations through a Monte Carlo simulation.
 
 Data
 ========================================================
@@ -58,10 +60,7 @@ Data
 
 - In order to show the specified method is functional and accurate, we've pulled data from the English premier league official results website over the course of the
 2019-2020 season, and the 2020-2021 season.  
-- The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express
-the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three
-columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team's opponent on that given
-day.
+- The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. 
 - The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking
 any and all fanfare. 
 
