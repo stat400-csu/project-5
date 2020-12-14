@@ -380,7 +380,7 @@ cont_table <- data.frame("Result" = c("@in", "Tie", "Loss", "Sum"),
                  "Relegated" = c(result[2], result[6], result[4], result[2] + result[4] + result[6]),
                  "Sum" = c(result[1] + result[2], result[5] + result [6], result[3] + result[4], 30))
 
-kable(cont_table)
+kable(cont_table, caption = "Contingency Table - Aston Villa (Relegation")
 ```
 
 
