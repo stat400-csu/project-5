@@ -18,20 +18,27 @@ However, due to the global COVID-19 pandemic, many sports leagues are playing wi
 ## Literature
 For this assignment, we selected “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League” by Jiří Lahvička. This paper presents a method method of calculating match importance, which the paper defines as “strength of relationship between the match result and a given season outcome”. Lahvička’s paper was of particular interest because of the Monte Carlo simulation used to estimate probabilities of all necessary match result-season outcome combinations. 
 
+
 ## Data 
-Starting in week 30 of the 2019/2020 Premier League we took the date of the home match, the home goals scored, the home team opponent, the away game match date, away game goals conceded, and away opponent. We took this data from the Premier League website (Premier League Table, Form Guide & Season Archives).  This data was collected for all matches played until week 9 of the 2020/2021 season. This week was selected because of limitations due to the end of the academic semester. 
+Starting from the beginning of the 2019/2020 Premier League, we took the date of the home match, the home goals scored, the home team opponent, the away game match date, away game goals conceded, and away opponent. We took this data from the Premier League website (Premier League Table, Form Guide & Season Archives). This data was collected for all matches played until week 9 of the 2020/2021 season. This week was selected because of limitations due to the end of the academic semester. 
+
+The Premier League is top soccer league in England, and arguably the world. Within each season, there are 20 teams playing each other twice, adding up to a total of 38 match days. For each match result (win, loss, draw), a team receives a certain number of points to determine the league standings. Winning a match results in three points, drawing a match results in one point, and losing results in zero points. At the end of each season, there are three main outcomes: winning the league, finishing in the top six (european competition), and finishing in the bottom three (relegation). Winning the league, or finishing in the top six is the ultimate goal for teams in the league, as entrance into european competition leads to more money and the ability to attract higher caliber players. On the other end, the bottom three, or relegation, where a team is pushed down to compete in a lower caliber league, is the last place a team in the Premier League wants to end up. Relegation always leads to significant financial consequences, and has a variety of other long and short-term negative impacts.
+
 
 ## Method 
-Step 1: In this step, we estimate the probabilities of results of all matches played under COVID-19 social distancing precautions. Lahvička selected a method that relies upon the team’s average score in the last 19 matches. The number of goals scored by the home team and the number of goals scored by the away team in the analyzed match are assumed to be independent Poisson distributed variables with the following expected values:
+Step 1: In this step, we estimate the probabilities of results of all matches played under COVID-19 social distancing precautions. Lahvička selected a method that relies upon the team’s average score in the last 19 matches. The number of goals scored by the home team and the number of goals scored by the away team in the analyzed match are assumed to be independent Poisson distributed variables with the following expected values: \newline
+
+\[\lambda_{home} = \frac{Average \ goals \ scored \ by \ home \ team + Average \ goals \ conceded \ by \ away \ team}{2}\]
+\[\lambda_{away} = \frac{Average \ goals \ scored \ by \ away \ team + Average \ goals \ conceded \ by \ home \ team}{2}\] \newline
 
 
-```{r step1a}
+```{r step 1a, echo=FALSE}
 
 ```
 
 From here we calculated the corresponding probability distributions of goals scored by each team, compute joint probabilities of all possible match scores( up to 9 goals, as that is the most goals ever scored in a Premier League game), and subsequently also the probabilities of a home win, draw, and away win. DISCUSS MATCH IN QUESTION. Lahvička assumed that team strengths do not change much over the course of a season, thus allowing us to use the past games played before the game in question and all remaining games. 
 
-```{r step1b}
+```{r step1b, echo=FALSE}
 
 ```
 
