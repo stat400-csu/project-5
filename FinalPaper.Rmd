@@ -18,23 +18,27 @@ library(dplyr)
 library(tidyverse)
 library(knitr)
 library(DescTools)
+
+set.seed(300)
 ```
 
 ## Introduction
 
 In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). Bois’ 2011 article covers how in American sports leagues there is a definite home advantage experienced across the major leagues. 
-Premier league
-However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. Caitlin Welch’s August 2020 article covers the beginnings of the changes seen in home field advantage after the COVID-19 protocols went into place. So our question arose: Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
+
+The Premier League is top soccer league in England, and arguably the world. Within each season, there are 20 teams playing each other twice, adding up to a total of 38 match days. For each match result (win, loss, draw), a team receives a certain number of points to determine the league standings. Winning a match results in three points, drawing a match results in one point, and losing results in zero points. At the end of each season, there are three main outcomes: winning the league, finishing in the top six (European competition), and finishing in the bottom three (relegation). Winning the league, or finishing in the top six is the ultimate goal for teams in the league, as entrance into European competition leads to more money and the ability to attract higher caliber players. On the other end, the bottom three, or relegation, where a team is pushed down to compete in a lower caliber league, is the last place a team in the Premier League wants to end up. Relegation always leads to significant financial consequences, and has a variety of other long and short-term negative impacts.
+
+Due to the global COVID-19 pandemic, many sports leagues are playing without spectators. Caitlin Welch’s August 2020 article covers the beginnings of the changes seen in home field advantage after the COVID-19 protocols went into place. So our question arose: Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
 
 
 ## Literature
 For this assignment, we selected “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League” by Jiří Lahvička. Our paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. Simply put, match importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte Carlo simulation. Where Lahvička used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19 pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven procedure will hold true for sporting events in empty stadiums. Lahvička’s paper was of particular interest because of the Monte Carlo simulation used to estimate probabilities of all necessary match result-season outcome combinations. 
 
 ## Data 
-In order to show the specified method is functional and accurate, we’ve pulled data from the English premier league official results website over the course of the 2019-2020 season, and the 2020-2021 season. The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that time period, and Manchester United who has only played 18 games over that time period. 
+In order to show the specified method is functional and accurate, we have pulled data from the English premier league official results website over the course of the 2019-2020 season, and the 2020-2021 season ("Premier League Table, Form Guide & Season Archives"). The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that time period, and Manchester United who has only played 18 games over that time period. 
 The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team’s opponent on that given day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this time span. The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking any and all fanfare.   
 
-The Premier League is top soccer league in England, and arguably the world. Within each season, there are 20 teams playing each other twice, adding up to a total of 38 match days. For each match result (win, loss, draw), a team receives a certain number of points to determine the league standings. Winning a match results in three points, drawing a match results in one point, and losing results in zero points. At the end of each season, there are three main outcomes: winning the league, finishing in the top six (european competition), and finishing in the bottom three (relegation). Winning the league, or finishing in the top six is the ultimate goal for teams in the league, as entrance into european competition leads to more money and the ability to attract higher caliber players. On the other end, the bottom three, or relegation, where a team is pushed down to compete in a lower caliber league, is the last place a team in the Premier League wants to end up. Relegation always leads to significant financial consequences, and has a variety of other long and short-term negative impacts.
+
 
 ## Method 
 
@@ -186,7 +190,7 @@ get_position <- function(table, team) {
 kable(league_table(368), caption = "League Standings up to Aston Villa - Arsenal")
 ```
 
-Then using a Monte Carlo simulation, we simulate the match we are interested in (Aston Villa - Arsenal), and the remainder of the season following our match of interest. In order to further analyze the match, and analyze its importance, we kept track of the outcome of each simulation of our game of interest, and whether or not Aston Villa was relegated or not at the end of each simulated season. A contingency table of Aston Villa's resulst in each simulated game versus Arsenal, along with the associated season outcome of each results is shown below.
+Then using a Monte Carlo simulation, we simulate the match we are interested in (Aston Villa - Arsenal), and the remainder of the season following our match of interest. In order to further analyze the match, and analyze its importance, we kept track of the outcome of each simulation of our game of interest, and whether Aston Villa was relegated or not at the end of each simulated season. A contingency table of Aston Villa's result in each simulated game versus Arsenal, along with the associated season outcome of each results is shown below. 
 
 ```{r,echo=FALSE}
 ## Step 2: MC Function
@@ -286,7 +290,7 @@ cont_table <- data.frame("Result" = c("Win", "Tie", "Loss", "Sum"),
                  "Relegated" = c(result[2], result[6], result[4], result[2] + result[4] + result[6]),
                  "Sum" = c(result[1] + result[2], result[5] + result [6], result[3] + result[4], 30))
 
-kable(cont_table, caption = "Contingency Table - Aston Villa (Relegation")
+kable(cont_table, caption = "Contingency Table - Aston Villa (Relegation)")
 ```
 
 
@@ -558,19 +562,19 @@ contingent = matrix(c(rankings[1]/m,0,rankings[3]/m,0,rankings[2]/m,relegated/(m
 colnames(contingent) = c("no","yes")
 rownames(contingent) = c("win","draw","lose")
 contingent = as.table(contingent)
-contingent
+kable(contingent, caption = "Tau - c Values ")
 
-kable(StuartTauC(contingent))
+kable(StuartTauC(contingent), caption = "Stuart Kendall Tau C- Likelyhood of Being Relegated")
 ```
 
 ## Verification
 
-For the example used (Aston Villa vs. Arsenal), we predicted the home team would lose, and thus be relegated. However, Aston Villa won and thus due to the results of other teams outcomes, were not relegated. 
+For the example used (Aston Villa - Arsenal), we predicted the home team would lose, and thus be relegated. However, Aston Villa won and thus due to the results of other teams outcomes, were not relegated. 
 
 ## Conclusion
 
 Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper? Not enough for us to detect anything. 
-    Since the results show there isn’t any difference in how a team plays under COVID conditions, we did some digging into the Premier League and as explained by Olver Roeder and James Curley, home-field advantage in soccer is disappearing ( Roeder & Curley). That article goes into great detail about the possible causes of this, but for the sake of this paper, it makes clear our initial assumption about the role of home field advantage and fans was misguided. We still learned something though. 
+    Since the results show there isn’t any difference in how a team plays under COVID conditions, we did some digging into the Premier League and as explained by Olver Roeder and James Curley, home-field advantage in soccer is disappearing ( Roeder & Curley). That article goes into great detail about the possible causes of this, but for the sake of this paper, it makes clear our initial assumption about the role of home field advantage and fans was misguided. Despite this, we would classify our results as a success. This replication gave us great hands on experience with the Monte Carlo method, and a better idea of how to use statistical methods we have learned in more free form problems. 
 
 
 ## Citations
