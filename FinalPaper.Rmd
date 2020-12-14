@@ -9,7 +9,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, echo=FALSE, warning=FALSE, include=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 # importing necessary libraries
 library(ggplot2)
 library(readr)
@@ -28,14 +28,9 @@ However, due to the global COVID-19 pandemic, many sports leagues are playing wi
 ## Literature
 For this assignment, we selected “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League” by Jiří Lahvička. Our paper is based on and will expand upon the article published by Jiřı́ Lahvička which is centered around a new method for determining match importance. Simply put, match importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte Carlo simulation. Where Lahvička used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19 pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven procedure will hold true for sporting events in empty stadiums. Lahvička’s paper was of particular interest because of the Monte Carlo simulation used to estimate probabilities of all necessary match result-season outcome combinations. 
 
-<<<<<<< HEAD
-=======
 ## Data 
 In order to show the specified method is functional and accurate, we’ve pulled data from the English premier league official results website over the course of the 2019-2020 season, and the 2020-2021 season. The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that time period, and Manchester United who has only played 18 games over that time period. 
-The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team’s opponent on that given day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this time span. 
-The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking any and all fanfare.   
- 
->>>>>>> 5c3561846fe5653361347bc8c2bce2808062baec
+The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team’s opponent on that given day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this time span. The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking any and all fanfare.   
 
 ## Data 
 Starting from the beginning of the 2019/2020 Premier League, we took the date of the home match, the home goals scored, the home team opponent, the away game match date, away game goals conceded, and away opponent. We took this data from the Premier League website (Premier League Table, Form Guide & Season Archives). This data was collected for all matches played until week 9 of the 2020/2021 season. This week was selected because of limitations due to the end of the academic semester. 
@@ -50,7 +45,7 @@ Step 1: In this step, we estimate the probabilities of results of all matches pl
 \[\lambda_{away} = \frac{Average \ goals \ scored \ by \ away \ team + Average \ goals \ conceded \ by \ home \ team}{2}\] \newline
 
 
-```{r step 1a, echo=FALSE}
+```{r, echo=FALSE}
 # importing game data for 19-20 season
 results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
 results_1920 <- results_1920 %>% select(Round.Number, Home.Team, Away.Team, Home, Away)
@@ -98,26 +93,301 @@ expected_goals <- function(home, away, matchday) {
 
 From here we calculated the corresponding probability distributions of goals scored by each team, compute joint probabilities of all possible match scores (up to 9 goals, as that is the most goals ever scored in a Premier League game), and subsequently also the probabilities of a home win, draw, and away win. For example, one interesting match we can look at is Aston Villa - Arsenal from match day 37 of the 2019-2020 season. At the time of this game, Aston Villa was in the bottom three of the league standings, and on the verge of relegation. Additionally, Aston Villa was an underdog in this game, as the following tables will showcase.
 
-```{r step1b, echo=FALSE}
+---
+title: "Final Paper"
+author: "Ben Eidler, Joseph Kroymann, Oriana Meldrum"
+date: "12/13/2020"
+output: pdf_document
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Step 2: In this step, the actual results of all previous match results up to our analyzed match are combined with the probabilities calculated in step one for all remaining matches until the end of the season (here, until week 10 of the 20/21 season) to find the probabilities of final team ranks depending upon the calculated match result.  First we calculated the league standing up to the game of interest. (DISPLAY DATA FRAME). 
-
-```{r step2a}
-
+```{r, echo=FALSE, warning=FALSE, include=FALSE}
+# importing necessary libraries
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(knitr)
+library(DescTools)
 ```
 
-Then using a Monte Carlo simulation, we run the likelihood of a home team win, a tie, or a home team lost, and those results affect whether the team will stay up in the Premier League or if they will be relegated. (DISPLAY TABLE). In the match used as an example, it was most likely that the home team would lose the game and be relegated. 
+## Introduction
 
-```{r step2b}
+In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). Bois’ 2011 article covers how in American sports leagues there is a definite home advantage experienced across the major leagues. 
+Premier league
+However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. Caitlin Welch’s August 2020 article covers the beginnings of the changes seen in home field advantage after the COVID-19 protocols went into place. So our question arose: Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
 
+
+## Literature
+For this assignment, we selected “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League” by Jiří Lahvička. Our paper is based on and will expand upon the article published by Jiří Lahvička which is centered around a new method for determining match importance. Simply put, match importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte Carlo simulation. Where Lahvička used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19 pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven procedure will hold true for sporting events in empty stadiums. Lahvička’s paper was of particular interest because of the Monte Carlo simulation used to estimate probabilities of all necessary match result-season outcome combinations. 
+
+## Data 
+In order to show the specified method is functional and accurate, we’ve pulled data from the English premier league official results website over the course of the 2019-2020 season, and the 2020-2021 season. The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that time period, and Manchester United who has only played 18 games over that time period. 
+The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team’s opponent on that given day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this time span. The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking any and all fanfare.   
+
+The Premier League is top soccer league in England, and arguably the world. Within each season, there are 20 teams playing each other twice, adding up to a total of 38 match days. For each match result (win, loss, draw), a team receives a certain number of points to determine the league standings. Winning a match results in three points, drawing a match results in one point, and losing results in zero points. At the end of each season, there are three main outcomes: winning the league, finishing in the top six (european competition), and finishing in the bottom three (relegation). Winning the league, or finishing in the top six is the ultimate goal for teams in the league, as entrance into european competition leads to more money and the ability to attract higher caliber players. On the other end, the bottom three, or relegation, where a team is pushed down to compete in a lower caliber league, is the last place a team in the Premier League wants to end up. Relegation always leads to significant financial consequences, and has a variety of other long and short-term negative impacts.
+
+## Method 
+
+### Step 1
+In this step, we estimate the probabilities of results of all matches played under COVID-19 social distancing precautions. Lahvička selected a method that relies upon the team’s average score in the last 19 matches. Lahvička assumed that team strengths do not change much over the course of a season, thus allowing us to use the past games played before the game in question and all remaining games. The number of goals scored by the home team and the number of goals scored by the away team in the analyzed match are assumed to be independent Poisson distributed variables with the following expected values: \newline
+
+\[\lambda_{home} = \frac{Average \ goals \ scored \ by \ home \ team + Average \ goals \ conceded \ by \ away \ team}{2}\]
+\[\lambda_{away} = \frac{Average \ goals \ scored \ by \ away \ team + Average \ goals \ conceded \ by \ home \ team}{2}\] \newline
+
+
+```{r, echo=FALSE}
+# importing game data for 19-20 season
+results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
+results_1920 <- results_1920 %>% select(Round.Number, Home.Team, Away.Team, Home, Away)
+
+# function that returns expected goals scored for a specific match (input two teams and a matchday)
+expected_goals <- function(home, away, matchday) {
+  rounds = seq((matchday - 1), (matchday - 19)) # matchdays to take data from
+  
+  home_data <- filter(results_1920, results_1920$Home.Team == home | results_1920$Away.Team == home)
+  away_data <- filter(results_1920, results_1920$Home.Team == away | results_1920$Away.Team == away)
+  
+  home_scored <- 0
+  home_conceded <- 0
+  away_scored <- 0
+  away_conceded <- 0
+  
+  for (i in rounds) {
+    if (home_data[i,]$Home.Team == home) {
+      home_scored = home_scored + home_data[i,]$Home
+      home_conceded = home_conceded + home_data[i,]$Away
+    }
+    
+    if (home_data[i,]$Away.Team == home) {
+      home_scored = home_scored + home_data[i,]$Away
+      home_conceded = home_conceded + home_data[i,]$Home
+    }
+    
+    if (away_data[i,]$Away.Team == away) {
+      away_scored = away_scored + away_data[i,]$Away
+      away_conceded = away_conceded + away_data[i,]$Home
+    }
+    
+    if (away_data[i,]$Home.Team == away) {
+      away_scored = away_scored + away_data[i,]$Home
+      away_conceded = away_conceded + away_data[i,]$Away
+    }
+  }
+  
+  home_expected <- (home_scored + away_conceded) / 2
+  away_expected <- (away_scored + home_conceded) / 2
+  
+  c(home_expected/19, away_expected/19)
+}
+```
+
+From here we calculated the corresponding probability distributions of goals scored by each team, compute joint probabilities of all possible match scores (up to 9 goals, as that is the most goals ever scored in a Premier League game), and subsequently also the probabilities of a home win, draw, and away win. For example, one interesting match we can look at is Aston Villa - Arsenal from match day 37 of the 2019-2020 season. At the time of this game, Aston Villa was in the bottom three of the league standings, and on the verge of relegation. Additionally, Aston Villa was an underdog in this game, as the following tables will showcase. \newline
+
+```{r, echo=FALSE, fig.align='center', fig.show='hold'}
+# expected goals table
+x <- expected_goals("Aston Villa", "Arsenal", 37)
+x_g <- data.frame("Aston_Villa" = round(x[1], 3), "Arsenal" = round(x[2], 3))
+
+# random game outcome probabilities
+game_probs <- data.frame("Outcome" = c("0-0", "1-0", "0-1", "1-1", "2-2"),
+                 "Probability" = c(dpois(0, x[1]) * dpois(0, x[2]), dpois(1, x[1]) * dpois(0, x[2]), 
+                                   dpois(0, x[1]) * dpois(1, x[2]), dpois(1, x[1]) * dpois(1, x[2]),
+                                   dpois(2, x[1]) * dpois(2, x[2])))
+
+kable(x_g, caption = "Expected Goals")
+kable(game_probs, caption = "Outcome Probabilities (Aston Villa - Arsenal)")
+```
+
+### Step 2
+In this step, the actual results of all previous match results up to our analyzed match (Aston Villa - Arsenal) are used to establish league standings up to right before the match. These standings are shown below. 
+
+```{r, echo=FALSE}
+# importing game data from 19-20 season
+results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
+results_1920 <- results_1920 %>% select(Round.Number, Date, Home.Team, Away.Team, Home, Away)
+#results_1920$ID <- seq.int(nrow(results_1920)) # giving each game an ID
+
+
+# importing table format
+table_1920 <- read.csv("data/19_20_PL_table.csv")
+
+# function that calculates league table up to right before the inputted match
+league_table <- function(game_number) {
+  games <- seq(1, game_number - 1)
+  
+  for (j in games) {
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GP + 1
+    
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GF + results_1920[j,]$Home
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$GA + results_1920[j,]$Away
+    
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GF + results_1920[j,]$Away
+    table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$GA + results_1920[j,]$Home
+    
+    if (results_1920[j,]$Home > results_1920[j,]$Away) { # home win
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 3
+    }
+    
+    if (results_1920[j,]$Home < results_1920[j,]$Away) { # away win
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 3
+    }
+    
+    if (results_1920[j,]$Home == results_1920[j,]$Away) { # tie
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Home.Team),]$P + 1
+      table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P <- table_1920[ table_1920$Team == as.character(results_1920[j,]$Away.Team),]$P + 1
+    }
+  }
+  
+  table_1920$GP <- NULL
+  table_1920 <- table_1920 %>% mutate(GD = GF - GA)
+  table_1920 <- table_1920[order(-table_1920$P, -table_1920$GD),]
+  rownames(table_1920) <- 1:nrow(table_1920)
+  
+  table_1920
+}
+
+# function that updates table
+update_table <- function(table, team, result, goals_for, goals_against) {
+  table[ table$Team == team,]$GF <- table[ table$Team == team,]$GF + goals_for
+  table[ table$Team == team,]$GA <- table[ table$Team == team,]$GA + goals_against
+  
+  if (result == "win") {
+    table[ table$Team == team,]$P <- table[ table$Team == team,]$P + 3
+    
+  }
+  
+  if (result == "tie") {
+    table[ table$Team == team,]$P <- table[ table$Team == team,]$P + 1
+  }
+  
+  table <- table %>% mutate(GD = GF - GA)
+  table <- table[order(-table$P, -table$GD),]
+  rownames(table) <- 1:nrow(table)
+  
+  table
+}
+
+# function that get's position of specific team in table
+get_position <- function(table, team) {
+  as.numeric(rownames(table[ table$Team == team,]))
+}
+
+kable(league_table(368), caption = "League Standings up to Aston Villa - Arsenal")
+```
+
+Then using a Monte Carlo simulation, we simulate the match we are interested in (Aston Villa - Arsenal), and the remainder of the season following our match of interest. In order to further analyze the match, and analyze its importance, we kept track of the outcome of each simulation of our game of interest, and whether or not Aston Villa was relegated or not at the end of each simulated season. A contingency table of Aston Villa's resulst in each simulated game versus Arsenal, along with the associated season outcome of each results is shown below.
+
+```{r,echo=FALSE}
+## Step 2: MC Function
+
+mc_step2 <- function(match_num) {
+  m <- 30 #Number of times to run it. 
+  win_stayup <- 0
+  win_relegated <- 0
+  
+  lose_stayup <- 0
+  lose_relegated <- 0
+  
+  tie_stayup <- 0
+  tie_relegated <- 0
+  
+  final_pos <- NULL
+  
+  for (j in seq(1, m)) {
+    win <- 0
+    loss <- 0
+    tie <- 0
+    starting_table <- league_table(368)
+    result <- "result"
+    
+    for (i in seq(match_num, 380)) {
+      home <- results_1920[i,]$Home.Team
+      away <- results_1920[i,]$Away.Team
+      round <- results_1920[i,]$Round.Number
+      
+      x <- expected_goals(home, away, round)
+      
+      h_g <- rpois(1, x[1])
+      a_g <- rpois(1, x[2])
+      
+      if (i == match_num) {
+        if (h_g > a_g) {
+          result = "win"
+        }
+        if (h_g < a_g) {
+          result = "lose"
+        }
+        if (h_g == a_g) {
+          result = "tie"
+        }
+      }
+      
+      if (h_g > a_g) {
+        starting_table <- update_table(starting_table, home, "win", h_g, a_g)
+        starting_table <- update_table(starting_table, away, "loss", a_g, h_g)
+      }
+      
+      if (h_g < a_g) {
+        starting_table <- update_table(starting_table, home, "loss", h_g, a_g)
+        starting_table <- update_table(starting_table, away, "win", a_g, h_g)
+      }
+      
+      if (h_g == a_g) {
+        starting_table <- update_table(starting_table, home, "tie", h_g, a_g)
+        starting_table <- update_table(starting_table, away, "tie", a_g, h_g)
+      }
+      
+    }
+    
+    final_pos <- get_position(starting_table, "Aston Villa")
+    
+    if (result == "win" & final_pos < 18) {
+      win_stayup <- win_stayup + 1
+    }
+    
+    if (result == "win" & final_pos >= 18) {
+      win_relegated <- win_relegated + 1
+    }
+    
+    if (result == "lose" & final_pos < 18) {
+      lose_stayup <- lose_stayup + 1
+    }
+    
+    if (result == "lose" & final_pos >= 18) {
+      lose_relegated <- lose_relegated + 1
+    }
+    
+    if (result == "tie" & final_pos < 18) {
+      tie_stayup <- tie_stayup + 1
+    }
+    
+    if (result == "tie" & final_pos >= 18) {
+      tie_relegated <- tie_relegated + 1
+    }
+  }
+  c(win_stayup, win_relegated, lose_stayup, lose_relegated, tie_stayup, tie_relegated)
+}
+
+result <- mc_step2(368)
+
+cont_table <- data.frame("Result" = c("@in", "Tie", "Loss", "Sum"),
+                 "Stay_Up" = c(result[1], result[5], result[3], result[1] + result[3] + result[5]),
+                 "Relegated" = c(result[2], result[6], result[4], result[2] + result[4] + result[6]),
+                 "Sum" = c(result[1] + result[2], result[5] + result [6], result[3] + result[4], 30))
+
+kable(cont_table)
 ```
 
 
-Step 3: In the last step, a contingency table is created and used to calculate individual match importance. Each contingency table is specific to whichever team is being investigated on the particular game in question,and their desired season outcome based on that game. The variables in these tables consist of three rows indicating the amount of wins, losses, and draws recorded through simulating, and two columns indicating whether or not the result led to relegation. Each contingency table is specific to whichever team is being investigated on a particular date, and their desired season outcome based on that game. As stated earlier, the importance is based on the strength of the relationship between the match result and end of season outcome. The statistic chosen to represent this value by Lahvička is the Stuart Kendall Tau C, a measure of association between two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance. Continuing the investigation into the week 37 matchup of Aston Villa vs. Arsenal, a contingency table was  created from the point of view for Aston Villa. The following are the respective contingency table and Stuart Kendall Tau C value: (DISPLAY OUTCOME)
+### Step 3
+In the last step, a contingency table is created and used to calculate individual match importance. Each contingency table is specific to whichever team is being investigated on the particular game in question,and their desired season outcome based on that game. The variables in these tables consist of three rows indicating the amount of wins, losses, and draws recorded through simulating, and two columns indicating whether or not the result led to relegation. Each contingency table is specific to whichever team is being investigated on a particular date, and their desired season outcome based on that game. As stated earlier, the importance is based on the strength of the relationship between the match result and end of season outcome. The statistic chosen to represent this value by Lahvička is the Stuart Kendall Tau C, a measure of association between two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance. Continuing the investigation into the week 37 matchup of Aston Villa vs. Arsenal, a contingency table was  created from the point of view for Aston Villa. The following are the respective contingency table and Stuart Kendall Tau C value: 
 
-```{r step3}
+```{r, echo=FALSE}
 
 ```
 
@@ -144,6 +414,7 @@ Premier League Table, Form Guide & Season Archives, 2020, www.premierleague.com/
 Roeder, Oliver, and James Curley. “Home-Field Advantage Doesn't Mean What It Used To In English Football.” FiveThirtyEight, FiveThirtyEight, 8 Oct. 2014, fivethirtyeight.com/features/home-field-advantage-english-premier-league/.
 
 Welch, Caitlin. “What's the Impact of Empty Stadiums on Home Field Advantage in The Premier League?” Cats Stats, 10 Aug. 2020, catsstats.timchartier.com/uncategorized/home-sweet-home-home-field-advantage-and-empty-stadiums-in-the-premier-league/.
+
 
 
 
