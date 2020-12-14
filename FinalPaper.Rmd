@@ -9,6 +9,16 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r, echo=FALSE, warning=FALSE, include=FALSE}
+# importing necessary libraries
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(knitr)
+library(DescTools)
+```
+
 ## Introduction:
 
 In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). Bois’ 2011 article covers how in American sports leagues there is a definite home advantage experienced across the major leagues. 
@@ -26,17 +36,59 @@ The Premier League is top soccer league in England, and arguably the world. With
 
 
 ## Method 
-Step 1: In this step, we estimate the probabilities of results of all matches played under COVID-19 social distancing precautions. Lahvička selected a method that relies upon the team’s average score in the last 19 matches. The number of goals scored by the home team and the number of goals scored by the away team in the analyzed match are assumed to be independent Poisson distributed variables with the following expected values: \newline
+Step 1: In this step, we estimate the probabilities of results of all matches played under COVID-19 social distancing precautions. Lahvička selected a method that relies upon the team’s average score in the last 19 matches. Lahvička assumed that team strengths do not change much over the course of a season, thus allowing us to use the past games played before the game in question and all remaining games. The number of goals scored by the home team and the number of goals scored by the away team in the analyzed match are assumed to be independent Poisson distributed variables with the following expected values: \newline
 
 \[\lambda_{home} = \frac{Average \ goals \ scored \ by \ home \ team + Average \ goals \ conceded \ by \ away \ team}{2}\]
 \[\lambda_{away} = \frac{Average \ goals \ scored \ by \ away \ team + Average \ goals \ conceded \ by \ home \ team}{2}\] \newline
 
 
 ```{r step 1a, echo=FALSE}
+# importing game data for 19-20 season
+results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
+results_1920 <- results_1920 %>% select(Round.Number, Home.Team, Away.Team, Home, Away)
 
+# function that returns expected goals scored for a specific match (input two teams and a matchday)
+expected_goals <- function(home, away, matchday) {
+  rounds = seq((matchday - 1), (matchday - 19)) # matchdays to take data from
+  
+  home_data <- filter(results_1920, results_1920$Home.Team == home | results_1920$Away.Team == home)
+  away_data <- filter(results_1920, results_1920$Home.Team == away | results_1920$Away.Team == away)
+  
+  home_scored <- 0
+  home_conceded <- 0
+  away_scored <- 0
+  away_conceded <- 0
+  
+  for (i in rounds) {
+    if (home_data[i,]$Home.Team == home) {
+      home_scored = home_scored + home_data[i,]$Home
+      home_conceded = home_conceded + home_data[i,]$Away
+    }
+    
+    if (home_data[i,]$Away.Team == home) {
+      home_scored = home_scored + home_data[i,]$Away
+      home_conceded = home_conceded + home_data[i,]$Home
+    }
+    
+    if (away_data[i,]$Away.Team == away) {
+      away_scored = away_scored + away_data[i,]$Away
+      away_conceded = away_conceded + away_data[i,]$Home
+    }
+    
+    if (away_data[i,]$Home.Team == away) {
+      away_scored = away_scored + away_data[i,]$Home
+      away_conceded = away_conceded + away_data[i,]$Away
+    }
+  }
+  
+  home_expected <- (home_scored + away_conceded) / 2
+  away_expected <- (away_scored + home_conceded) / 2
+  
+  c(home_expected/19, away_expected/19)
+}
 ```
 
-From here we calculated the corresponding probability distributions of goals scored by each team, compute joint probabilities of all possible match scores( up to 9 goals, as that is the most goals ever scored in a Premier League game), and subsequently also the probabilities of a home win, draw, and away win. DISCUSS MATCH IN QUESTION. Lahvička assumed that team strengths do not change much over the course of a season, thus allowing us to use the past games played before the game in question and all remaining games. 
+From here we calculated the corresponding probability distributions of goals scored by each team, compute joint probabilities of all possible match scores (up to 9 goals, as that is the most goals ever scored in a Premier League game), and subsequently also the probabilities of a home win, draw, and away win. For example, one interesting match we can look at is Aston Villa - Arsenal from match day 37 of the 2019-2020 season. At the time of this game, Aston Villa was in the bottom three of the league standings, and on the verge of relegation. Additionally, Aston Villa was an underdog in this game, as the following tables will showcase.
 
 ```{r step1b, echo=FALSE}
 
