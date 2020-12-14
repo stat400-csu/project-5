@@ -1,0 +1,82 @@
+---
+title: "Final Paper"
+author: "Ben Eidler, Joseph Kroymann, Oriana Meldrum"
+date: "12/13/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction:
+
+In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). Bois’ 2011 article covers how in American sports leagues there is a definite home advantage experienced across the major leagues. 
+Premier league
+However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. Caitlin Welch’s August 2020 article covers the beginnings of the changes seen in home field advantage after the COVID-19 protocols went into place. So our question arose: Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
+
+## Literature
+For this assignment, we selected “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League” by Jiří Lahvička. This paper presents a method method of calculating match importance, which the paper defines as “strength of relationship between the match result and a given season outcome”. Lahvička’s paper was of particular interest because of the Monte Carlo simulation used to estimate probabilities of all necessary match result-season outcome combinations. 
+
+## Data 
+Starting in week 30 of the 2019/2020 Premier League we took the date of the home match, the home goals scored, the home team opponent, the away game match date, away game goals conceded, and away opponent. We took this data from the Premier League website (Premier League Table, Form Guide & Season Archives).  This data was collected for all matches played until week 9 of the 2020/2021 season. This week was selected because of limitations due to the end of the academic semester. 
+
+## Method 
+Step 1: In this step, we estimate the probabilities of results of all matches played under COVID-19 social distancing precautions. Lahvička selected a method that relies upon the team’s average score in the last 19 matches. The number of goals scored by the home team and the number of goals scored by the away team in the analyzed match are assumed to be independent Poisson distributed variables with the following expected values:
+
+
+```{r step1a}
+
+```
+
+From here we calculated the corresponding probability distributions of goals scored by each team, compute joint probabilities of all possible match scores( up to 9 goals, as that is the most goals ever scored in a Premier League game), and subsequently also the probabilities of a home win, draw, and away win. DISCUSS MATCH IN QUESTION. Lahvička assumed that team strengths do not change much over the course of a season, thus allowing us to use the past games played before the game in question and all remaining games. 
+
+```{r step1b}
+
+```
+
+Step 2: In this step, the actual results of all previous match results up to our analyzed match are combined with the probabilities calculated in step one for all remaining matches until the end of the season (here, until week 10 of the 20/21 season) to find the probabilities of final team ranks depending upon the calculated match result.  First we calculated the league standing up to the game of interest. (DISPLAY DATA FRAME). 
+
+```{r step2a}
+
+```
+
+Then using a Monte Carlo simulation, we run the likelihood of a home team win, a tie, or a home team lost, and those results affect whether the team will stay up in the Premier League or if they will be relegated. (DISPLAY TABLE). In the match used as an example, it was most likely that the home team would lose the game and be relegated. 
+
+```{r step2b}
+
+```
+
+
+Step 3: In the last step, a contingency table is created and used to calculate individual match importance. Each contingency table is specific to whichever team is being investigated on the particular game in question,and their desired season outcome based on that game. The variables in these tables consist of three rows indicating the amount of wins, losses, and draws recorded through simulating, and two columns indicating whether or not the result led to relegation. Each contingency table is specific to whichever team is being investigated on a particular date, and their desired season outcome based on that game. As stated earlier, the importance is based on the strength of the relationship between the match result and end of season outcome. The statistic chosen to represent this value by Lahvička is the Stuart Kendall Tau C, a measure of association between two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance. Continuing the investigation into the week 37 matchup of Aston Villa vs. Arsenal, a contingency table was  created from the point of view for Aston Villa. The following are the respective contingency table and Stuart Kendall Tau C value: (DISPLAY OUTCOME)
+
+```{r step3}
+
+```
+
+## Verification
+
+For the example used (Aston Villa vs. Arsenal), we predicted the home team would lose, and thus be relegated. However, Aston Villa won and thus due to the results of other teams outcomes, were not relegated. 
+
+## Conclusion
+
+Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper? Not enough for us to detect anything. 
+    Since the results show there isn’t any difference in how a team plays under COVID conditions, we did some digging into the Premier League and as explained by Olver Roeder and James Curley, home-field advantage in soccer is disappearing ( Roeder & Curley). That article goes into great detail about the possible causes of this, but for the sake of this paper, it makes clear our initial assumption about the role of home field advantage and fans was misguided. We still learned something though. 
+
+
+## Citations
+
+Bois, Jon. “Home Advantage In Sports: A Scientific Study Of How Much It Affects&nbsp;Winning.” SBNation.com, SBNation.com, 19 Jan. 2011, www.sbnation.com/2011/1/19/1940438/home-field-advantage-sports-stats-data.
+
+“Home Advantage.” Wikipedia, Wikimedia Foundation, 14 Nov. 2020, en.wikipedia.org/wiki/Home_advantage.
+
+Lahvička, Jiří. “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League.” Journal of Sports Economics, vol. 16, no. 4, 2015, pp. 390–409., doi:10.1177/1527002513490172.
+
+Premier League Table, Form Guide & Season Archives, 2020, www.premierleague.com/tables.
+
+Roeder, Oliver, and James Curley. “Home-Field Advantage Doesn't Mean What It Used To In English Football.” FiveThirtyEight, FiveThirtyEight, 8 Oct. 2014, fivethirtyeight.com/features/home-field-advantage-english-premier-league/.
+
+Welch, Caitlin. “What's the Impact of Empty Stadiums on Home Field Advantage in The Premier League?” Cats Stats, 10 Aug. 2020, catsstats.timchartier.com/uncategorized/home-sweet-home-home-field-advantage-and-empty-stadiums-in-the-premier-league/.
+
+
+
