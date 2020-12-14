@@ -1,97 +1,3 @@
----
-title: "Final Paper"
-author: "Ben Eidler, Joseph Kroymann, Oriana Meldrum"
-date: "12/13/2020"
-output: pdf_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r, echo=FALSE, warning=FALSE}
-# importing necessary libraries
-library(ggplot2)
-library(readr)
-library(dplyr)
-library(tidyverse)
-library(knitr)
-library(DescTools)
-```
-
-## Introduction:
-
-In sports psychology, the home field advantage is an acknowledged benefit. This benefit has been attributed to psychological effects supporting fans have on the competitors or referees; to psychological or physiological advantages of playing near home in familiar situations; to the disadvantages away teams suffer from changing time zones or climates, or from the rigors of travel; and in some sports, to specific rules that favor the home team directly or indirectly (“Home Advantage” 2020). Bois’ 2011 article covers how in American sports leagues there is a definite home advantage experienced across the major leagues. 
-Premier league
-However, due to the global COVID-19 pandemic, many sports leagues are playing without spectators. Caitlin Welch’s August 2020 article covers the beginnings of the changes seen in home field advantage after the COVID-19 protocols went into place. So our question arose: Does the absence of fans affect the predictions of the methods laid out in Lahvička’s 2015 paper?
-
-## Literature
-For this assignment, we selected “Using Monte Carlo Simulation to Calculate Match Importance: The Case of English Premier League” by Jiří Lahvička. Our paper is based on and will expand upon the article published by Jiřı́ Lahvička which is centered around a new method for determining match importance. Simply put, match importance is defined as the relationship between the outcome of an individual game, and how that outcome could affect a given team at the end of their season. Match importance is also predicated on the strength of this relationship, and to what extent a match truly is vital for a team's end of season outcome. In order to conceptualize and give a numeric value to individual match importance, the method will calculate the probabilities of all match result-season outcome combinations through a Monte Carlo simulation. Where Lahvička used data from 12 seasons of English Premier League, our procedure will use the approximately 19 games played since the COVID-19 pandemic to assess whether or not fanfare can impact individual match importance and performance. Using this method we hope to determine whether or not this proven procedure will hold true for sporting events in empty stadiums. Lahvička’s paper was of particular interest because of the Monte Carlo simulation used to estimate probabilities of all necessary match result-season outcome combinations. 
-
-## Data 
-In order to show the specified method is functional and accurate, we’ve pulled data from the English premier league official results website over the course of the 2019-2020 season, and the 2020-2021 season. The data consists of 20 different tables each corresponding to a specific team in the English Premier League. Of these teams, the three organizations which entered the league following relegation from the 2019-2020 season (Leeds United, Fulham Football Club, and West Bromwich Albion) have only 8 match dates worth of data. The remaining 17 teams have 19 match days worth of data spanning the previous two seasons, excluding Sheffield United who has played 20 games over that time period, and Manchester United who has only played 18 games over that time period. 
-The collected data is fairly simple, and consists of 6 variables, excluding a column dedicated to indicating which team the table represents. The first three columns express the date of the home game for the specific team, the number of goals said team scored during that particular game, and the team's opponent on that given day. The next three columns express the date of the away game for the specific team, the number of goals said team surrendered during that particular game, and the team’s opponent on that given day. Whether or not a team actually wins a given game if not a factor in this specific analysis, which is why the data only includes single values for goals rather than multiple values to indicate victory or defeat.  An important factor in this data is the final number in the columns representing goals scored/goals surrendered, which indicates that teams average amount of goals scored at home or goals surrendered away. These values have been stored in an additional table dedicated to tracking the averages over this time span. The games we pulled data from were deliberately chosen because they were played during the COVID-19 global pandemic, and thus have been played in empty stadiums lacking any and all fanfare.   
-
-## Data 
-Starting from the beginning of the 2019/2020 Premier League, we took the date of the home match, the home goals scored, the home team opponent, the away game match date, away game goals conceded, and away opponent. We took this data from the Premier League website (Premier League Table, Form Guide & Season Archives). This data was collected for all matches played until week 9 of the 2020/2021 season. This week was selected because of limitations due to the end of the academic semester. 
-
-The Premier League is top soccer league in England, and arguably the world. Within each season, there are 20 teams playing each other twice, adding up to a total of 38 match days. For each match result (win, loss, draw), a team receives a certain number of points to determine the league standings. Winning a match results in three points, drawing a match results in one point, and losing results in zero points. At the end of each season, there are three main outcomes: winning the league, finishing in the top six (european competition), and finishing in the bottom three (relegation). Winning the league, or finishing in the top six is the ultimate goal for teams in the league, as entrance into european competition leads to more money and the ability to attract higher caliber players. On the other end, the bottom three, or relegation, where a team is pushed down to compete in a lower caliber league, is the last place a team in the Premier League wants to end up. Relegation always leads to significant financial consequences, and has a variety of other long and short-term negative impacts.
-
-
-## Method 
-Step 1: In this step, we estimate the probabilities of results of all matches played under COVID-19 social distancing precautions. Lahvička selected a method that relies upon the team’s average score in the last 19 matches. Lahvička assumed that team strengths do not change much over the course of a season, thus allowing us to use the past games played before the game in question and all remaining games. The number of goals scored by the home team and the number of goals scored by the away team in the analyzed match are assumed to be independent Poisson distributed variables with the following expected values: \newline
-
-\[\lambda_{home} = \frac{Average \ goals \ scored \ by \ home \ team + Average \ goals \ conceded \ by \ away \ team}{2}\]
-\[\lambda_{away} = \frac{Average \ goals \ scored \ by \ away \ team + Average \ goals \ conceded \ by \ home \ team}{2}\] \newline
-
-
-```{r, echo=FALSE}
-# importing game data for 19-20 season
-results_1920 <- read.csv("data/19_20_PL_results.csv", nrows = 380)
-results_1920 <- results_1920 %>% select(Round.Number, Home.Team, Away.Team, Home, Away)
-
-# function that returns expected goals scored for a specific match (input two teams and a matchday)
-expected_goals <- function(home, away, matchday) {
-  rounds = seq((matchday - 1), (matchday - 19)) # matchdays to take data from
-  
-  home_data <- filter(results_1920, results_1920$Home.Team == home | results_1920$Away.Team == home)
-  away_data <- filter(results_1920, results_1920$Home.Team == away | results_1920$Away.Team == away)
-  
-  home_scored <- 0
-  home_conceded <- 0
-  away_scored <- 0
-  away_conceded <- 0
-  
-  for (i in rounds) {
-    if (home_data[i,]$Home.Team == home) {
-      home_scored = home_scored + home_data[i,]$Home
-      home_conceded = home_conceded + home_data[i,]$Away
-    }
-    
-    if (home_data[i,]$Away.Team == home) {
-      home_scored = home_scored + home_data[i,]$Away
-      home_conceded = home_conceded + home_data[i,]$Home
-    }
-    
-    if (away_data[i,]$Away.Team == away) {
-      away_scored = away_scored + away_data[i,]$Away
-      away_conceded = away_conceded + away_data[i,]$Home
-    }
-    
-    if (away_data[i,]$Home.Team == away) {
-      away_scored = away_scored + away_data[i,]$Home
-      away_conceded = away_conceded + away_data[i,]$Away
-    }
-  }
-  
-  home_expected <- (home_scored + away_conceded) / 2
-  away_expected <- (away_scored + home_conceded) / 2
-  
-  c(home_expected/19, away_expected/19)
-}
-```
-
-From here we calculated the corresponding probability distributions of goals scored by each team, compute joint probabilities of all possible match scores (up to 9 goals, as that is the most goals ever scored in a Premier League game), and subsequently also the probabilities of a home win, draw, and away win. For example, one interesting match we can look at is Aston Villa - Arsenal from match day 37 of the 2019-2020 season. At the time of this game, Aston Villa was in the bottom three of the league standings, and on the verge of relegation. Additionally, Aston Villa was an underdog in this game, as the following tables will showcase.
 
 ---
 title: "Final Paper"
@@ -375,7 +281,7 @@ mc_step2 <- function(match_num) {
 
 result <- mc_step2(368)
 
-cont_table <- data.frame("Result" = c("@in", "Tie", "Loss", "Sum"),
+cont_table <- data.frame("Result" = c("Win", "Tie", "Loss", "Sum"),
                  "Stay_Up" = c(result[1], result[5], result[3], result[1] + result[3] + result[5]),
                  "Relegated" = c(result[2], result[6], result[4], result[2] + result[4] + result[6]),
                  "Sum" = c(result[1] + result[2], result[5] + result [6], result[3] + result[4], 30))
@@ -388,7 +294,273 @@ kable(cont_table, caption = "Contingency Table - Aston Villa (Relegation")
 In the last step, the contingency table from step 2 is used to calculate individual match importance. Each contingency table is specific to whichever team is being investigated on the particular game in question,and their desired season outcome based on that game. The variables in these tables consist of three rows indicating the amount of wins, losses, and draws recorded through simulating, and two columns indicating whether or not the result led to relegation. Each contingency table is specific to whichever team is being investigated on a particular date, and their desired season outcome based on that game. As stated earlier, the importance is based on the strength of the relationship between the match result and end of season outcome. The statistic chosen to represent this value by Lahvička is the Stuart Kendall Tau C, a measure of association between two ordinal variables with a result between 0 and 1, 0 being the least extreme circumstance and 1 being the most extreme circumstance. The following is the Stuart Kendall Tau C value for Aston Villa - Arsenal, and the prospect of being relegated or not.
 
 ```{r, echo=FALSE}
+library(DescTools)
 
+mc_step2 <- function(match_num) {
+  m <- 30 #Number of times to run it. 
+  home_win <-0
+  home_loss<-0
+  home_tie<-0
+  final_pos <- rep(NA, m)
+  
+  for (j in seq(1, m)) {
+    win <- 0
+    loss <- 0
+    tie <- 0
+    starting_table <- league_table(368)
+    for (i in seq(match_num, 380)) {
+        home <- results_1920[i,]$Home.Team
+        away <- results_1920[i,]$Away.Team
+        round <- results_1920[i,]$Round.Number
+  
+        x <- expected_goals(home, away, round)
+  
+        h_g <- rpois(1, x[1])
+        a_g <- rpois(1, x[2])
+  
+        if (i == match_num) {
+          if (h_g > a_g) {
+            win <- win + 1
+          }
+          if (h_g < a_g) {
+            loss <- loss + 1
+          }
+          if (h_g == a_g) {
+            tie = tie + 1
+          }
+        }
+  
+        if (h_g > a_g) {
+          starting_table <- update_table(starting_table, home, "win", h_g, a_g)
+          starting_table <- update_table(starting_table, away, "loss", a_g, h_g)
+        }
+  
+        if (h_g < a_g) {
+          starting_table <- update_table(starting_table, home, "loss", h_g, a_g)
+          starting_table <- update_table(starting_table, away, "win", a_g, h_g)
+        }
+  
+        if (h_g == a_g) {
+          starting_table <- update_table(starting_table, home, "tie", h_g, a_g)
+          starting_table <- update_table(starting_table, away, "tie", a_g, h_g)
+        }
+  
+    }
+    home_win <- home_win + win
+    home_loss <- home_loss + loss
+    home_tie <- home_tie + tie
+    final_pos[j] <- get_position(starting_table, "Aston Villa")
+  }
+  c(home_win, home_loss, home_tie, final_pos)
+}
+
+result <- mc_step2(368)
+
+m=30
+rankings = as.matrix(result)
+rankings1 = rankings[4:m+3,]
+
+relegated=0
+tracker = 0
+while(tracker < m-3){
+  if(rankings1[1]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[1]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[2]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[2]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[3]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[3]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[4]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[4]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[5]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[5]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[6]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[6]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[7]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[7]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[8]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[8]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[9]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[9]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[10]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[10]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[11]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[11]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[12]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[12]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[13]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[13]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[14]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[14]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[15]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[15]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[16]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[16]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[17]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[17]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[18]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[18]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[19]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[19]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[20]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[20]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[21]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[21]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[22]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[22]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[23]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[23]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[24]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[24]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[25]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[25]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[26]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[26]<=18){
+    tracker=tracker + 1
+  }
+  if(rankings1[27]>=18){
+    relegated = relegated + 1
+    tracker = tracker + 1
+  }
+  if(rankings1[27]<=18){
+    tracker=tracker + 1
+  }
+}
+
+contingent = matrix(c(rankings[1]/m,0,rankings[3]/m,0,rankings[2]/m,relegated/(m-3)), ncol=2, byrow=TRUE)
+colnames(contingent) = c("no","yes")
+rownames(contingent) = c("win","draw","lose")
+contingent = as.table(contingent)
+contingent
+
+kable(StuartTauC(contingent))
 ```
 
 ## Verification
