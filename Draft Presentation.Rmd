@@ -1,0 +1,16 @@
+---
+title: "Draft Presentation"
+author: "Ethan Schilling"
+date: "2025-12-01"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Predicting Top Players
+
+- Goal use a confusion matrix to determine outcomes of predicting top player status
+
+
