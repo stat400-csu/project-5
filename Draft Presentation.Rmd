@@ -12,5 +12,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Predicting Top Players
 
 - Goal use a confusion matrix to determine outcomes of predicting top player status
+- Group top 15 players and create a heat map/confusion matrix to predict top player status
 
 
