@@ -16,6 +16,14 @@ knitr::opts_chunk$set(echo = FALSE)
 - Recreate heat mapped confusion matrix or a single row.
 - Goal is to predict as many NBA All-Stars as possible.
 
+
+## Their Confusion Matrix
+
+```{r}
+corr18 <- readRDS("corr18.rds")
+corr18
+```
+
 ## Our Confusion Matrix
 
 ```{r}

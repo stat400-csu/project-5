@@ -12,6 +12,26 @@ library(RColorBrewer)
 
 ```{r}
 
+
+df_18 <- read_csv("all_nba_2018.csv")
+
+df_numeric18 <- df_18 %>% select(minutes_pg,
+  fga,
+  fg3a,
+  fta,
+  pts_per_g,
+  trb_per_g,
+  ast_per_g,
+  stl_per_g,
+  blk_per_g,
+  fg_pct,
+  fg3_pct,
+  ft_pct
+)
+
+
+
+
 df <- read_csv("all_nba_2022.csv")
 
 df_numeric <- df %>% select(minutes_pg,
@@ -37,6 +57,10 @@ corr_df <- melt(corr_mat)
 my_colors <- colorRampPalette(c("#d73027", "#fee08b", "#1a9850"))(100)
 
 
+corr_mat18 <- cor(df_numeric18, use = "pairwise.complete.obs")
+
+corr_df18 <- melt(corr_mat18)
+
 ```
 
 ```{r}
@@ -56,6 +80,24 @@ corr1 <- ggplot(corr_df, aes(Var1, Var2, fill = value)) +
   coord_fixed()
 
 saveRDS(corr1, "corr1.rds")
+
+
+corr18 <- ggplot(corr_df18, aes(Var1, Var2, fill = value)) +
+  geom_tile() +
+  geom_text(aes(label = sprintf("%.2f", value)), size = 3) +
+  scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
+                       midpoint = 0, limits = c(-1, 1)) +
+  scale_x_discrete(labels = function(x) gsub("_", " ", x)) +
+  scale_y_discrete(labels = function(x) gsub("_", " ", x)) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+    axis.title = element_blank(),
+    panel.grid = element_blank()
+  ) +
+  coord_fixed()
+print(corr1)
+print(corr18)
+saveRDS(corr18, "corr18.rds")
 ```
 
-LALALALLA
