@@ -1,5 +1,0 @@
----
-title: "scraped_data"
-output: html_document
----
-
