@@ -65,11 +65,5 @@ all_nba_2022
 
 ```
 
-```{r}
-library(usethis)
-library(gitcreds)
-use_git_config(user.name = "TylerManuello", user.email = "tylermanuello@gmail.com")
-"hi"
-```
 
 
