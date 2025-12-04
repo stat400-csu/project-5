@@ -1,6 +1,6 @@
 ---
 title: "Draft Presentation"
-author: "Ethan Schilling"
+author: "Ethan Schilling, Ivan Shokhrin, & Tyler Manuello"
 date: "2025-12-01"
 output: beamer_presentation
 ---
