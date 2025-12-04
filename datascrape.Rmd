@@ -68,4 +68,62 @@ write.csv(all_nba_2022, "all_nba_2022.csv", row.names = FALSE)
 ```
 
 
+```{r}
+Sys.setenv("VROOM_CONNECTION_SIZE" = 131072 * 2)
+
+all_nba_2018_players <- c(
+  "Giannis Antetokounmpo",
+  "Kemba Walker",
+  "Paul George",
+  "Nikola Jokić",
+  "Damian Lillard",
+  "Stephen Curry",
+  "Kyrie Irving",
+  "Kevin Durant",
+  "Joel Embiid",
+  "Kawhi Leonard",
+  "LeBron James",
+  "Russell Westbrook",
+  "Blake Griffin",
+  "Rudy Gobert",
+  "James Harden"
+)
+
+logs_2018 <- game_logs(
+  seasons = 2018,
+  league = "NBA",
+  result_types = "player",
+  season_types = "Regular Season",
+  nest_data = FALSE,
+  assign_to_environment = FALSE,
+  return_message = FALSE
+)
+
+all_nba_logs <- logs_2018 %>%
+  filter(namePlayer %in% all_nba_2018_players)
+
+all_nba_2018 <- all_nba_logs %>%
+  group_by(namePlayer) %>%
+  summarise(
+    games       = n(),
+    minutes_pg  = mean(minutes, na.rm = TRUE),
+    fga         = mean(fga, na.rm = TRUE),
+    fg3a        = mean(fg3a, na.rm = TRUE),
+    fta         = mean(fta, na.rm = TRUE),
+    pts_per_g   = mean(pts, na.rm = TRUE),
+    trb_per_g   = mean(treb, na.rm = TRUE),
+    ast_per_g   = mean(ast, na.rm = TRUE),
+    stl_per_g   = mean(stl, na.rm = TRUE),
+    blk_per_g   = mean(blk, na.rm = TRUE),
+    fg_pct      = mean(pctFG,  na.rm = TRUE),
+    fg3_pct     = mean(pctFG3, na.rm = TRUE),
+    ft_pct      = mean(pctFT,  na.rm = TRUE),
+  ) %>%
+  arrange(desc(pts_per_g))
+
+all_nba_2018
+
+```
+
+
 
