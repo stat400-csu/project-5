@@ -11,8 +11,6 @@ library(RColorBrewer)
 
 
 ```{r}
-
-
 df_18 <- read_csv("all_nba_2018.csv")
 
 df_numeric18 <- df_18 %>% select(minutes_pg,
