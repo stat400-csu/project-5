@@ -63,6 +63,8 @@ all_nba_2022 <- all_nba_logs %>%
 
 all_nba_2022
 
+write.csv(all_nba_2022, "all_nba_2022.csv", row.names = FALSE)
+
 ```
 
 
