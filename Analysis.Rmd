@@ -3,7 +3,7 @@ title: "Analysis"
 output: html_document
 ---
 
-```{r}
+```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
 library(reshape2)
 library(RColorBrewer)
