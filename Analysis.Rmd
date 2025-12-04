@@ -40,15 +40,22 @@ my_colors <- colorRampPalette(c("#d73027", "#fee08b", "#1a9850"))(100)
 ```
 
 ```{r}
-ggplot(corr_df, aes(Var1, Var2, fill = value)) +
-  scale_fill_gradientn(colours = my_colors, limits = c(-1,1)) +
+corr1 <- ggplot(corr_df, aes(Var1, Var2, fill = value)) +
+  geom_tile() +
   geom_text(aes(label = sprintf("%.2f", value)), size = 3) +
-  theme_minimal(base_size = 12) + theme(
-    axis.text.x = element_text(angle = 70, hjust = 1),
+  scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
+                       midpoint = 0, limits = c(-1, 1)) +
+  scale_x_discrete(labels = function(x) gsub("_", " ", x)) +
+  scale_y_discrete(labels = function(x) gsub("_", " ", x)) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
     axis.title = element_blank(),
     panel.grid = element_blank()
   ) +
   coord_fixed()
+
+saveRDS(corr1, "corr1.rds")
 ```
 
 LALALALLA

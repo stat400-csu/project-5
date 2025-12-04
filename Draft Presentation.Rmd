@@ -9,8 +9,22 @@ output: beamer_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Predicting Top Players
+## Goal: Recreate confusion matrix of 2018 NBA data and compare to the 2022 season
 
+- Use a confusion matrix to determine outcomes of predicting top player status
+- Group top 15 players and create a heat map/confusion matrix to predict top player status
+- Recreate heat mapped confusion matrix or a single row.
+- Goal is to predict as many NBA All-Stars as possible.
+
+## Our Confusion Matrix
+
+```{r}
+corr1 <- readRDS("corr1.rds")
+corr1
+```
+
+
+## 
 - Goal use a confusion matrix to determine outcomes of predicting top player status
 - Group top 15 players and create a heat map/confusion matrix to predict top player status
 - Recreate heat mapped confusion matrix or a single row.
