@@ -100,3 +100,51 @@ print(corr18)
 saveRDS(corr18, "corr18.rds")
 ```
 
+
+
+
+
+
+```{r}
+set.seed(400)
+library(dplyr)
+library(caret)
+library(tidyverse)
+library(nnet)
+
+df <- read.csv("all_nba_2022.csv")
+
+df$all_nba_team <- as.factor(df$all_nba_team)
+
+B <- 1000
+
+conf_matrices <- list()
+
+for (i in 1:B) {
+  repeat {
+    bootstrap_indices <- sample(1:nrow(df), replace = TRUE)
+    bootstrap_sample <- df[bootstrap_indices, ]
+    
+  
+    if (all(levels(df$all_nba_team) %in% bootstrap_sample$all_nba_team)) break
+  }
+  
+  model <- multinom(all_nba_team ~ games + minutes_pg + fga + fg3a + fta + 
+                      pts_per_g + trb_per_g + ast_per_g + stl_per_g + blk_per_g + 
+                      fg_pct + fg3_pct + ft_pct, 
+                    data = bootstrap_sample, trace = FALSE)
+  
+  preds <- predict(model, newdata = df)
+  cm <- confusionMatrix(preds, df$all_nba_team)
+  conf_matrices[[i]] <- cm$table
+}
+
+
+avg_cm <- Reduce("+", conf_matrices) / B
+
+
+print(avg_cm)
+
+```
+
+
