@@ -29,6 +29,30 @@ all_nba_2022_players <- c(
   "Trae Young"
 )
 
+all_nba_2022_team_map <- tibble::tibble(
+  namePlayer = all_nba_2022_players,
+  all_nba_team = c(
+    # First Team
+    "1",  # Giannis Antetokounmpo
+    "1",  # Devin Booker
+    "1",  # Luka Dončić
+    "1",  # Nikola Jokić
+    "1",  # Jayson Tatum
+    # Second Team
+    "2", # Stephen Curry
+    "2", # DeMar DeRozan
+    "2", # Kevin Durant
+    "2", # Joel Embiid
+    "2", # Ja Morant
+    # Third Team
+    "3",  # LeBron James
+    "3",  # Chris Paul
+    "3",  # Pascal Siakam
+    "3",  # Karl-Anthony Towns
+    "3"   # Trae Young
+  )
+)
+
 logs_2022 <- game_logs(
   seasons = 2022,
   league = "NBA",
@@ -59,7 +83,8 @@ all_nba_2022 <- all_nba_logs %>%
     fg3_pct     = mean(pctFG3, na.rm = TRUE),
     ft_pct      = mean(pctFT,  na.rm = TRUE),
   ) %>%
-  arrange(desc(pts_per_g))
+  left_join(all_nba_2022_team_map, by = "namePlayer") %>%
+  arrange(all_nba_team, desc(pts_per_g))
 
 all_nba_2022
 
@@ -87,6 +112,28 @@ all_nba_2018_players <- c(
   "Blake Griffin",
   "Rudy Gobert",
   "James Harden"
+)
+
+all_nba_2018_team_map <- tibble::tibble(
+  namePlayer = all_nba_2018_players,
+  all_nba_team = c(
+    # First Team
+    "1",  # Giannis Antetokounmpo
+    "3",  # Kemba Walker
+    "1",  # Paul George
+    "1",  # Nikola Jokić
+    "2", # Damian Lillard
+    "1",  # Stephen Curry
+    "2", # Kyrie Irving
+    "2", # Kevin Durant
+    "2", # Joel Embiid
+    "2", # Kawhi Leonard
+    "3",  # LeBron James
+    "3",  # Russell Westbrook
+    "3",  # Blake Griffin
+    "3",  # Rudy Gobert
+    "1"   # James Harden
+  )
 )
 
 logs_2018 <- game_logs(
@@ -119,7 +166,8 @@ all_nba_2018 <- all_nba_logs %>%
     fg3_pct     = mean(pctFG3, na.rm = TRUE),
     ft_pct      = mean(pctFT,  na.rm = TRUE),
   ) %>%
-  arrange(desc(pts_per_g))
+  left_join(all_nba_2018_team_map, by = "namePlayer") %>%
+  arrange(all_nba_team, desc(pts_per_g))
 
 all_nba_2018
 
