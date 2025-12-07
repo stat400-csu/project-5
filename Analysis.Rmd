@@ -100,3 +100,29 @@ print(corr18)
 saveRDS(corr18, "corr18.rds")
 ```
 
+```{r}
+library(tibble)
+
+pace_2018  <- 97.3
+pace_2022  <- 97.0
+
+tov_2018   <- 13.3
+tov_2022   <- 12.8
+
+orb_2018   <- 22.4
+orb_2022   <- 23.1
+
+players_2018 <- 494
+players_2022 <- 15
+
+league_compare <- tibble(
+  season = c(2018, 2022),
+  pace = c(pace_2018, pace_2022),
+  tov_pct = c(tov_2018, tov_2022),
+  orb_pct = c(orb_2018, orb_2022),
+  num_players = c(players_2018, players_2022)
+)
+
+league_compare
+```
+
