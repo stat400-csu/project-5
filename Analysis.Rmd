@@ -1,17 +1,28 @@
 ---
-title: "Analysis"
+title: "All-NBA team Analysis"
 output: html_document
 ---
 
 ```{r, echo=FALSE, message=FALSE}
+suppressPackageStartupMessages({
 library(tidyverse)
-library(reshape2)
+library(data.table)
+library(caret)
 library(RColorBrewer)
+library(ggplot2)
+library(nnet)
+library(dplyr)
+library(reshape2)
+library(knitr)
+library(kableExtra)
+set.seed(400)
+})
 ```
 
 
+##DATA CLEANING/FORMATTING
 ```{r}
-df_18 <- read_csv("all_nba_2018.csv")
+df_18 <- read_csv("all_nba_2018.csv",show_col_types = FALSE)
 
 df_numeric18 <- df_18 %>% select(minutes_pg,
   fga,
@@ -27,10 +38,7 @@ df_numeric18 <- df_18 %>% select(minutes_pg,
   ft_pct
 )
 
-
-
-
-df <- read_csv("all_nba_2022.csv")
+df <- read_csv("all_nba_2022.csv",show_col_types = FALSE)
 
 df_numeric <- df %>% select(minutes_pg,
   fga,
@@ -45,30 +53,47 @@ df_numeric <- df %>% select(minutes_pg,
   fg3_pct,
   ft_pct
 )
+
+var_labels <- c(
+  minutes_pg = "Minutes per Game",
+  fga        = "Field Goal Attempts",
+  fg3a       = "3-Point Attempts",
+  fta        = "Free Throw Attempts",
+  pts_per_g  = "Points per Game",
+  trb_per_g  = "Total Rebounds per Game",
+  ast_per_g  = "Assists per Game",
+  stl_per_g  = "Steals per Game",
+  blk_per_g  = "Blocks per Game",
+  fg_pct     = "Field Goal %", 
+  fg3_pct    = "3-Point %", 
+  ft_pct     = "Free Throw %", 
+  games      = "Games Played"
+)
 ```
 
+## Creating Standard Correlations
 ```{r}
 corr_mat <- cor(df_numeric, use = "pairwise.complete.obs")
 
-corr_df <- melt(corr_mat)
-
-my_colors <- colorRampPalette(c("#d73027", "#fee08b", "#1a9850"))(100)
-
+corr_df <- reshape2::melt(corr_mat)
 
 corr_mat18 <- cor(df_numeric18, use = "pairwise.complete.obs")
 
-corr_df18 <- melt(corr_mat18)
-
+corr_df18 <- reshape2::melt(corr_mat18)
 ```
 
+
+#3 Plotting Correlations
 ```{r}
+set.seed(400)
+
 corr1 <- ggplot(corr_df, aes(Var1, Var2, fill = value)) +
   geom_tile() +
   geom_text(aes(label = sprintf("%.2f", value)), size = 3) +
   scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
-                       midpoint = 0, limits = c(-1, 1)) +
-  scale_x_discrete(labels = function(x) gsub("_", " ", x)) +
-  scale_y_discrete(labels = function(x) gsub("_", " ", x)) +
+                        midpoint = 0, limits = c(-1, 1)) +
+  scale_x_discrete(labels = var_labels) +  
+  scale_y_discrete(labels = var_labels) +
   theme_minimal(base_size = 12) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
@@ -85,8 +110,8 @@ corr18 <- ggplot(corr_df18, aes(Var1, Var2, fill = value)) +
   geom_text(aes(label = sprintf("%.2f", value)), size = 3) +
   scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
                        midpoint = 0, limits = c(-1, 1)) +
-  scale_x_discrete(labels = function(x) gsub("_", " ", x)) +
-  scale_y_discrete(labels = function(x) gsub("_", " ", x)) +
+  scale_x_discrete(labels = var_labels) +  
+  scale_y_discrete(labels = var_labels) +
   theme_minimal(base_size = 12) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
@@ -99,6 +124,130 @@ print(corr18)
 
 saveRDS(corr18, "corr18.rds")
 ```
+
+```{r}
+##Confusion and Correlation Matrices using Bootstrapping
+
+set.seed(400)
+
+df <- read.csv("all_nba_2022.csv")
+
+df$all_nba_team <- as.factor(df$all_nba_team)
+
+B <- 1000
+
+conf_matrices <- list()
+
+for (i in 1:B) {
+  repeat {
+    bootstrap_indices <- sample(1:nrow(df), replace = TRUE)
+    bootstrap_sample <- df[bootstrap_indices, ]
+    
+  
+    if (all(levels(df$all_nba_team) %in% bootstrap_sample$all_nba_team)) break
+  }
+  
+  model <- multinom(all_nba_team ~ games + minutes_pg + fga + fg3a + fta + 
+                      pts_per_g + trb_per_g + ast_per_g + stl_per_g + blk_per_g + 
+                      fg_pct + fg3_pct + ft_pct, 
+                    data = bootstrap_sample, trace = FALSE)
+  
+  preds <- predict(model, newdata = df)
+  
+  cm <- confusionMatrix(preds, df$all_nba_team)
+  
+  conf_matrices[[i]] <- cm$table
+}
+
+
+avg_cm <- Reduce("+", conf_matrices) / B
+
+
+print(avg_cm)
+```
+
+
+```{r}
+## Correlation Bootstrapping
+
+num_vars <- df %>% 
+  select(games, minutes_pg, fga, fg3a, fta,
+         pts_per_g, trb_per_g, ast_per_g, stl_per_g, blk_per_g,
+         fg_pct, fg3_pct, ft_pct)
+
+B <- 1000
+corr_list <- vector("list", B)
+
+for (i in 1:B) {
+
+  
+  bootstrap_indices <- sample(1:nrow(num_vars), replace = TRUE)
+  boot_sample <- num_vars[bootstrap_indices, ]
+
+
+  corr_list[[i]] <- cor(boot_sample, use = "pairwise.complete.obs")
+}
+
+
+avg_corr <- Reduce("+", corr_list) / B
+avg_corr
+
+corr_melt <- reshape2::melt(avg_corr)
+
+
+
+ggplot(corr_melt, aes(Var1, Var2, fill = value)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sprintf("%.2f", value)), size = 3) +
+  scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
+    midpoint = 0, limits = c(-1, 1)
+  ) +
+  scale_x_discrete(labels = var_labels) + 
+  scale_y_discrete(labels = var_labels) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  labs(title = "Bootstrapped Average Correlation Matrix", fill = "Corr")
+```
+
+
+
+
+```{r}
+num_vars <- df %>% 
+  select(minutes_pg, fga, fg3a, fta,
+         pts_per_g, trb_per_g, ast_per_g,
+         stl_per_g, blk_per_g, fg_pct, fg3_pct, ft_pct)
+
+B <- 1000
+corr_list <- vector("list", B)
+n <- nrow(num_vars)
+
+for (i in 1:B) {
+  boot_rows <- sample(1:n, size = n, replace = TRUE)
+  sim_data <- num_vars[boot_rows, ]
+  corr_list[[i]] <- cor(sim_data, use = "pairwise.complete.obs")
+}
+
+avg_corr <- Reduce("+", corr_list) / B
+corr_melt <- reshape2::melt(avg_corr)
+
+ggplot(corr_melt, aes(Var1, Var2, fill = value)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sprintf("%.2f", value)), size = 3) +
+  scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
+                       midpoint = 0, limits = c(-1, 1)) +
+  scale_x_discrete(labels = var_labels) +
+  scale_y_discrete(labels = var_labels) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+        axis.title = element_blank()) + labs(title = "Monte Carlo Average Correlation Matrix (Bootstrap Rows)", fill = "Corr")
+
+```
+
 
 ```{r}
 library(tibble)
@@ -124,5 +273,8 @@ league_compare <- tibble(
 )
 
 league_compare
+
+
+saveRDS(league_compare, "league_compare") 
 ```
 

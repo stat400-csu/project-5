@@ -11,32 +11,29 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Goal: Recreate confusion matrix of 2018 NBA data and compare to the 2022 season
-
-- Use a confusion matrix to determine outcomes of predicting top player status
-- Group top 15 players and create a heat map/confusion matrix to predict top player status
-- Recreate heat mapped confusion matrix or a single row.
-- Goal is to predict as many NBA All-Stars as possible.
+## Goal: Recreate a heatmapped Correlation matrix of 2018 NBA data and compare to the 2022 season
+- Use a confusion/correlation to predict/understand All-NBA Team Placement status
+- Group top 15 players of 2022 season and compare to 2018 players from the paper "A Hybrid Machine Learning Model for Predicting USA NBA All-Stars" 
+- Use Monte Carlo and Bootstrapping to produce averaged estimates about NBA stats and their correlations.
 
 
-## Their Confusion Matrix
+## Introduction to Basic Stats
+- Percent stats
+  - 3pt, Ft, Fg
+- Per game stats
+  - Blocks, Steals, Assists, Rebounds, Points, Minutes
+- Attempts
+  - 3pt, Ft, Fg
+- Total
+  - Games Played
+
+## What We Notice
 
 ```{r}
-corr18 <- readRDS("corr18.rds")
-corr18
+tibble1 <- readRDS("league_compare")
+tibble1
 ```
-
-## Our Confusion Matrix
-
-```{r}
-corr1 <- readRDS("corr1.rds")
-corr1
-```
-
-
-## 
-- Goal use a confusion matrix to determine outcomes of predicting top player status
-- Group top 15 players and create a heat map/confusion matrix to predict top player status
-- Recreate heat mapped confusion matrix or a single row.
-- Goal is to predict as many NBA All-Stars as possible.
-
+- Pace is down
+- Less turnovers
+- Rebounding is up
+- Smaller sample size
