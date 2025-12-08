@@ -2,9 +2,10 @@
 title: "Correlation Of NBA Statistics"
 author: "Ethan Schilling, Ivan Shokhrin, & Tyler Manuello"
 date: "2025-12-01"
-output: 
+output:
   ioslides_presentation:
     css: style.css
+  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -29,7 +30,7 @@ knitr::opts_chunk$set(echo = FALSE)
 * Monte Carlo simulation of correlation matrices
 
 
-## Introduction to Basic Stats (talk about why bootstrapping is preferable for skewed variables, some are skewed)
+## Introduction to Basic Stats
 - Percent stats
   - 3pt, Ft, Fg
 - Per game stats
@@ -38,7 +39,6 @@ knitr::opts_chunk$set(echo = FALSE)
   - 3pt, Ft, Fg
 - Total
   - Games Played
-
 
 ## What We Notice from Season to Season
 ```{r}
@@ -50,13 +50,21 @@ tibble1
 - Rebounding is up
 - Smaller sample size
 
+## Their Matrix
+#Add photo of thier graph
 
 ## Replicated Correlation Matrix from 2018 season
 ```{r, fig.width=8, fig.height=4.5, fig.align='center'}
 corr18 <- readRDS("corr18.rds")
-corr18
+print(corr18)
 ```
 
+
+## Replicated Correlation Matrix from 2022 season
+```{r, fig.width=8, fig.height=4.5, fig.align='center'}
+corr1 <- readRDS("corr1.rds")
+print(corr1)
+```
 
 ## Statistics to Note from Matrix:
 The red squares are the least correlated statistics where as the green squares are highly correlated on a scale from -1 to 1.
