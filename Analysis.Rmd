@@ -270,3 +270,56 @@ league_compare
 saveRDS(league_compare, "league_compare") 
 ```
 
+```{r}
+## Monte Carlo Simulation for All Player Stats
+
+set.seed(400)
+B <- 1000   
+
+# Select all numeric stats to simulate
+
+num_vars <- df %>% select(minutes_pg, fga, fg3a, fta,
+pts_per_g, trb_per_g, ast_per_g,
+stl_per_g, blk_per_g, fg_pct, fg3_pct, ft_pct)
+
+# Compute means and SDs for each stat
+
+stat_means <- sapply(num_vars, mean, na.rm = TRUE)
+stat_sds   <- sapply(num_vars, sd, na.rm = TRUE)
+
+# Initialize data frame to store Monte Carlo simulated means
+
+mc_summary <- data.frame(iteration = 1:B)
+
+for (stat in colnames(num_vars)) {
+mc_summary[[paste0("mean_", stat)]] <- numeric(B)
+}
+
+# Monte Carlo iterations
+
+for (i in 1:B) {
+sim_data <- sapply(names(stat_means), function(stat) {
+rnorm(n = nrow(df), mean = stat_means[stat], sd = stat_sds[stat])
+})
+sim_data <- as.data.frame(sim_data)
+
+# Store average simulated stat for this iteration
+
+for (stat in colnames(sim_data)) {
+mc_summary[[paste0("mean_", stat)]][i] <- mean(sim_data[[stat]])
+}
+}
+
+#Plot distributions for selected stats
+
+library(reshape2)
+mc_melt <- melt(mc_summary, id.vars = "iteration")
+
+ggplot(mc_melt, aes(x = value)) +
+geom_histogram(bins = 30, fill = "#1a9850", color = "white") +
+facet_wrap(~variable, scales = "free_x") +
+labs(title = "Monte Carlo Distributions of Average Player Stats",
+x = "Simulated Average Value", y = "Frequency")
+
+```
+
