@@ -1,0 +1,99 @@
+/* =======================
+   General Slide Styles
+   ======================= */
+
+/* Slide background */
+.slide {
+  background-color: #f9f9f9; /* light gray */
+  color: #222222;             /* dark text */
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+}
+
+/* Headings */
+h1 {
+  font-size: 2.5em;
+  color: #003366; /* dark blue */
+}
+h2 {
+  font-size: 2em;
+  color: #003366;
+}
+h3 {
+  font-size: 1.5em;
+  color: #003366;
+}
+
+/* Bullet points */
+ul {
+  font-size: 20px;
+  margin-left: 1em;
+  line-height: 1.5;
+}
+
+/* =======================
+   Columns Layout
+   ======================= */
+.columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap; /* makes columns stack on small screens */
+  margin-bottom: 20px;
+}
+
+.column {
+  padding: 10px;
+}
+
+/* Plots inside columns scale nicely */
+.column img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* =======================
+   Tables (if needed)
+   ======================= */
+table {
+  border-collapse: collapse;
+  margin: 10px 0;
+  width: 100%;
+}
+
+table, th, td {
+  border: 1px solid #cccccc;
+}
+
+th {
+  background-color: #e6f2ff; /* light blue */
+  color: #003366;
+  padding: 5px;
+}
+
+td {
+  padding: 5px;
+}
+
+/* =======================
+   Code Chunks
+   ======================= */
+pre, code {
+  background-color: #f4f4f4;
+  border-radius: 4px;
+  padding: 3px 5px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+/* =======================
+   Links
+   ======================= */
+a {
+  color: #0055cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

@@ -11,6 +11,7 @@ library(data.table)
 library(caret)
 library(RColorBrewer)
 library(ggplot2)
+library(ggrepel)
   
   # Multinomial regression
 library(nnet)
@@ -102,7 +103,7 @@ corr_df18 <- reshape2::melt(corr_mat18)
 set.seed(400)
 
 # Heatmap for 2022
-corr1 <- ggplot(corr_df, aes(Var1, Var2, fill = value)) +
+corr22 <- ggplot(corr_df, aes(Var1, Var2, fill = value)) +
   geom_tile() +
   geom_text(aes(label = sprintf("%.2f", value)), size = 2) + 
   scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
@@ -118,7 +119,7 @@ corr1 <- ggplot(corr_df, aes(Var1, Var2, fill = value)) +
   coord_fixed() +
   labs(title = "2022 NBA Heatmap")
 
-saveRDS(corr1, "corr1.rds")
+saveRDS(corr22, "corr22.rds")
 
 # Heatmap for 2018
 corr18 <- ggplot(corr_df18, aes(Var1, Var2, fill = value)) +
@@ -136,8 +137,10 @@ corr18 <- ggplot(corr_df18, aes(Var1, Var2, fill = value)) +
   ) +
   coord_fixed() + 
   labs(title = "2018 NBA Heatmap")
-print(corr1)
+
+
 print(corr18)
+print(corr22)
 
 saveRDS(corr18, "corr18.rds")
 ```
@@ -270,13 +273,13 @@ league_compare
 saveRDS(league_compare, "league_compare") 
 ```
 
+
 ```{r}
 ## Monte Carlo Simulation for All Player Stats
 
 set.seed(400)
 B <- 1000   
 
-# Select all numeric stats to simulate
 
 num_vars <- df %>% select(minutes_pg, fga, fg3a, fta,
 pts_per_g, trb_per_g, ast_per_g,
@@ -286,6 +289,7 @@ stl_per_g, blk_per_g, fg_pct, fg3_pct, ft_pct)
 
 stat_means <- sapply(num_vars, mean, na.rm = TRUE)
 stat_sds   <- sapply(num_vars, sd, na.rm = TRUE)
+
 
 # Initialize data frame to store Monte Carlo simulated means
 
@@ -322,4 +326,139 @@ labs(title = "Monte Carlo Distributions of Average Player Stats",
 x = "Simulated Average Value", y = "Frequency")
 
 ```
+Leauge Level Averages
 
+
+
+## Replicating the MVP Ranking with Linear Regression
+Rank 1 → 10 points
+
+Rank 2 → 7 points
+
+Rank 3 → 5 points
+
+Rank 4 → 3 points
+
+Rank 5 → 1 point
+
+Rank 6–15 → 0 points
+
+```{r}
+df <- read_csv("all_nba_2022.csv")
+
+head(df)
+
+
+df <- df %>% 
+  arrange(desc(pts_per_g)) %>%
+  mutate(rank = row_number())
+df <- df %>%
+  mutate(points = case_when(
+    rank == 1 ~ 10,
+    rank == 2 ~ 7,
+    rank == 3 ~ 5,
+    rank == 4 ~ 3,
+    rank == 5 ~ 1,
+    TRUE ~ 0
+  ))
+    
+
+mvp_model <- lm(points ~ pts_per_g + trb_per_g + ast_per_g, data = df)
+
+summary(mvp_model)
+
+
+
+df <- df %>%
+  mutate(predicted_points = predict(mvp_model, newdata = df)) %>%
+  arrange(desc(predicted_points))
+
+df %>% select(namePlayer, rank, points, predicted_points)
+
+
+ggplot(df, aes(x = points, y = predicted_points, label = namePlayer)) + geom_point(color = "forestgreen", size = 3) + 
+  geom_text(nudge_y = 0.5) +
+  labs(title = "Predicted vs Proxy MVP Points (Ranked by PTS per Game)",
+       x = "Assigned Points (from Rank)",
+       y = "Predicted Points") +
+  theme_minimal()
+       
+```
+## Bootstrap Predicted MVP Points with 95% CI
+```{r}
+
+df <- read_csv("all_nba_2022.csv")
+
+
+df <- df %>%
+  arrange(desc(pts_per_g)) %>%
+  mutate(rank = row_number())
+
+
+df <- df %>%
+  mutate(points = case_when(
+    rank == 1 ~ 10,
+    rank == 2 ~ 7,
+    rank == 3 ~ 5,
+    rank == 4 ~ 3,
+    rank == 5 ~ 1,
+    TRUE ~ 0
+  ))
+
+
+core_model <- lm(points ~ pts_per_g + trb_per_g + ast_per_g, data = df)
+
+# Predicted points
+df <- df %>%
+  mutate(predicted_points = predict(core_model, newdata = df)) %>%
+  arrange(desc(predicted_points))
+
+
+set.seed(400)
+B <- 1000
+n <- nrow(df)
+
+pred_matrix <- matrix(NA, nrow = B, ncol = n)
+colnames(pred_matrix) <- df$namePlayer
+
+for (i in 1:B) {
+  boot_indices <- sample(1:n, replace = TRUE)
+  boot_sample <- df[boot_indices, ]
+  
+  boot_model <- lm(points ~ pts_per_g + trb_per_g + ast_per_g, data = boot_sample)
+  
+  pred_matrix[i, ] <- predict(boot_model, newdata = df)
+}
+
+
+pred_matrix <- pmax(pred_matrix, 0)
+
+
+avg_pred <- colMeans(pred_matrix)
+ci_lower <- apply(pred_matrix, 2, quantile, 0.025)
+ci_upper <- apply(pred_matrix, 2, quantile, 0.975)
+
+pred_summary <- tibble(
+  player = df$namePlayer,
+  avg_pred = avg_pred,
+  ci_lower = ci_lower,
+  ci_upper = ci_upper,
+  actual_points = df$points
+) %>%
+  arrange(desc(avg_pred))
+
+pred_summary
+
+
+ggplot(pred_summary, aes(x = actual_points, y = avg_pred, label = player)) +
+  geom_point(color = "forestgreen", size = 3) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = "grey50") +
+  geom_text_repel(size = 3) +
+  labs(
+    title = "Bootstrap Predicted MVP Points (Top 15 Players)",
+    x = "Assigned Points (from Rank)",
+    y = "Predicted MVP Points"
+  ) +
+  theme_minimal()
+
+```

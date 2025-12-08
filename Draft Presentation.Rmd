@@ -1,23 +1,35 @@
 ---
-title: "Draft Presentation"
+title: "Correlation Of NBA Statistics"
 author: "Ethan Schilling, Ivan Shokhrin, & Tyler Manuello"
 date: "2025-12-01"
-output:
-  slidy_presentation: default
-  beamer_presentation: default
+output: 
+  ioslides_presentation:
+    css: style.css
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Goal: Recreate a heatmapped Correlation matrix of 2018 NBA data and compare to the 2022 season
-- Use a confusion/correlation to predict/understand All-NBA Team Placement status
-- Group top 15 players of 2022 season and compare to 2018 players from the paper "A Hybrid Machine Learning Model for Predicting USA NBA All-Stars" 
-- Use Monte Carlo and Bootstrapping to produce averaged estimates about NBA stats and their correlations.
+
+## Goal: Understand Correlations between NBA performance stats
+- Recreate Heatmapped Correlation Matrix from the article
+- Quantify uncertainty using bootstrapping
+- Simulate season-to-season variability with Monte Carlo
+- Discuss important stats and features of the leauge that would lead to differing correlations across seasons.
+
+##  Data and Methods
+
+* **Dataset:** Top 15 NBA players (2018/2022 season stats)
+* **Goal:** Understand relationships between NBA performance metrics
+
+###  Methods Used
+* Correlation analysis
+* Bootstrap confidence intervals
+* Monte Carlo simulation of correlation matrices
 
 
-## Introduction to Basic Stats
+## Introduction to Basic Stats (talk about why bootstrapping is preferable for skewed variables, some are skewed)
 - Percent stats
   - 3pt, Ft, Fg
 - Per game stats
@@ -27,8 +39,8 @@ knitr::opts_chunk$set(echo = FALSE)
 - Total
   - Games Played
 
-## What We Notice
 
+## What We Notice from Season to Season
 ```{r}
 tibble1 <- readRDS("league_compare")
 tibble1
@@ -37,3 +49,62 @@ tibble1
 - Less turnovers
 - Rebounding is up
 - Smaller sample size
+
+
+## Replicated Correlation Matrix from 2018 season
+```{r, fig.width=8, fig.height=4.5, fig.align='center'}
+corr18 <- readRDS("corr18.rds")
+corr18
+```
+
+
+## Statistics to Note from Matrix:
+The red squares are the least correlated statistics where as the green squares are highly correlated on a scale from -1 to 1.
+
+### Strong Relationships:
+- PTS and FGA
+- AST and PTS
+- REB and BLK
+
+### Weak relationships
+- FT% and every other statistic
+
+
+Maybe talk about why correlations would vary based on position on team
+
+
+## Bootstrapping Correlations
+Include bootstrap plot,
+Table of CI's
+
+Plot Ideas:
+
+Simulated Correlation Histogram
+
+Example: distribution of PTS–FGA correlation over 10,000 fake seasons.
+
+Simulated Average Correlation Matrix vs Real Matrix
+
+Two heatmaps side by side
+
+Shows how robust the relationships are
+
+Monte Carlo Variability Plot
+
+For each stat pair, plot SD of simulated correlations
+
+Identifies stable vs unstable relationships
+
+Talking points (3 minutes):
+
+Motivate Monte Carlo: “What if the NBA played 10,000 alternate versions of the season?”
+
+Show that some correlations barely change (PTS–FGA), meaning they're structural
+
+Show that some vary a lot (STL–BLK), meaning they're noisy
+
+Explain the multivariate normal model used
+
+Mention how this method is used in real sports analytics
+
+This section alone can easily take 4–5 minutes if needed.
