@@ -5,7 +5,6 @@ date: "2025-12-01"
 output:
   ioslides_presentation:
     css: style.css
-  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +13,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 ## Goal: Understand Correlations between NBA performance stats
-- Recreate Heatmapped Correlation Matrix from the article
+- Recreate Heatmapped Correlation Matrix from the article "A Hybrid Machine Learning Model for Predicting USA NBA All-Stars"
 - Quantify uncertainty using bootstrapping
 - Simulate season-to-season variability with Monte Carlo
 - Discuss important stats and features of the leauge that would lead to differing correlations across seasons.
@@ -35,9 +34,6 @@ knitr::opts_chunk$set(echo = FALSE)
 - Bootstrap resampling to estimate variability in correlations
 
 - Monte Carlo simulation to assess stability of correlation matrices
-
-- Bootstrap confidence intervals for predicted MVP scores
-
 
 ## Motivation
 - Why do this study?
@@ -100,10 +96,10 @@ corr22
 ## Statistics to Note from Matrices:
 The red squares are the least correlated statistics where as the green squares are highly correlated on a scale from -1 to 1.
 
-### Strong Relationships:
-- PTS and FGA 
-- AST and PTS
-- REB and BLK
+### Strong Relationships 2022 Season:
+- PTS and FGA (0.86)
+- REB and BLK (0.82)
+- FG% and REB (0.82)
 
 ### Weak relationships
 - FT% and most other statistics
@@ -122,8 +118,6 @@ The red squares are the least correlated statistics where as the green squares a
 - Lineups have become standardized as well as minutes
 
 
-
-
 ## 3-Point Attempts
 
 Points vs 3PA
@@ -133,6 +127,22 @@ Points vs 3PA
 * 2022 : 0.71
 
 - Why? The top scoring teams were more 3pt dominant (ex. Warriors)
+
+
+## 3-Point Attempts Graph 2018
+```{r, message = FALSE}
+readRDS("PTS3PA_18.rds")
+```
+
+
+
+
+## 3-Point Attempt Graph 2022
+
+```{r, message = FALSE}
+readRDS("PTS3PA_22.rds")
+```
+
 
 ## 3 Point Average vs Field Goal %
 
@@ -144,6 +154,23 @@ Points vs 3PA
 - In 2018, only high-usages players scored a lot of threes while in 2022, everybody has started to shoot threes -> less to seperate the elite scorers as much thanks to the three point revolution.
 
 
+
+## 3 Point Average vs Field Goal % Graph 2018
+
+```{r, message = FALSE}
+readRDS("tpa_fg18.rds")
+```
+
+
+
+## 3 Point Average vs Field Goal % Graph 2022
+
+```{r, message = FALSE}
+readRDS("tpa_fg.rds")
+```
+
+
+
 ## FG Attempts vs Scoring 
 
 - 2018: FGA vs PTS = 0.91
@@ -152,22 +179,60 @@ Points vs 3PA
 
 - In 2022, more teams rely on ball movement, effciency, and possession by possesion matchups more than just volume shooting.
 
-- This is a hint at the rise of heliocentric offenses like Luka and Jokic where raw shot attempts are replaced more by playmaking. Lineups have shifted to distribution from one player rathen than funneling shots to one guy.
+- This is a hint at the rise of heliocentric offenses like Luka and Jokic where raw shot attempts are replaced more by playmaking. Lineups have shifted to distribution from one player rather than funneling shots to one guy.
 
 
-## Monte Carlo Simulation for League Stats
+
+## FG Attempts vs Scoring Graph 2018
+
+```{r, message = FALSE}
+readRDS("fga_pts18.rds")
+```
+
+
+## FG Attempts vs Scoring Graph 2022
+
+```{r, message = FALSE}
+readRDS("fga_pts.rds")
+```
+
+
+## Bootstrapping Simulation for League Stats
 
 ```{r}
 readRDS("corr_boot.rds")
 ```
 
-## Monte Carlo for Leauge Stats
+
+
+## Bootstrapping for Leauge Stats
+
+- Used Bootstrapping to understand the averages for the leauge if we were to sample from our dataset mutiple times
 
 - This plot gives very smooth league averages for all of the stats in our dataset.
 
 - The plot represents the most "average" correlation of the leagues stats.
 
-- How does this compare to the actual data we have?
+- How does this compare to the actual data we have? 
+
+
+
+## Monte Carlo Distributions for League Stats
+
+```{r}
+readRDS("mc_avg.rds")
+```
+
+
+
+## Monte Carlo Distributions Continued
+
+- The previous plots are Monte Carlo simulated distributions of all the NBA stats we are working with.
+
+- Some almost seem bimodal while others are a almost perfect normal distribution
+
+- These values are very important to understand the overall ranges of the expected values of these statistics in the league and how the contribute to understanding how these stats change and affect the league.
+
 
 ## Conclusion
 
@@ -176,6 +241,8 @@ readRDS("corr_boot.rds")
 - Most correlations are obvious because they go hand in hand (ex. shooting and scoring)
 
 - Using correlation can highlight which facets of the game are most important to make adjustments to and how they would effect statistics.
+
+- Bootstrapping and Monte Carlo methods are particularly useful for smaller sample sizes, as they allow for deeper interpretation of data that might be otherwise difficult to analyze reliably.
 
 
 

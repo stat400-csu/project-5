@@ -43,7 +43,8 @@ df_numeric18 <- df_18 %>% select(minutes_pg,
   blk_per_g,
   fg_pct,
   fg3_pct,
-  ft_pct
+  ft_pct,
+  games
 )
 
 
@@ -62,7 +63,8 @@ df_numeric <- df %>% select(minutes_pg,
   blk_per_g,
   fg_pct,
   fg3_pct,
-  ft_pct
+  ft_pct,
+  games
 )
 # Update Plot Labels
 var_labels <- c(
@@ -131,6 +133,43 @@ PTS3PA_22 <- ggplot(df, aes(x = fg3a, y = pts_per_g)) +
   theme_minimal()
 PTS3PA_22
 saveRDS(PTS3PA_22, "PTS3PA_22.rds")
+
+
+tpa_fg_18 <- ggplot(df_18, aes(x = fg3_pct, y = fga)) +
+  geom_point(color = "blue", size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "3-Point % vs Field Goal Attempts 2018",
+       x = "3-Point %", y = "Field Goal Attempts per Game") +
+  theme_minimal()
+tpa_fg_18
+saveRDS(tpa_fg_18, "tpa_fg18.rds")
+
+fga_pts_18 <- ggplot(df_18, aes(x = fga, y = pts_per_g)) +
+  geom_point(color = "darkgreen", size = 3) +
+   geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Field Goal Attempts vs Points per Game 2018",
+       x = "Field Goal Attempts per Game", y = "Points per Game") +
+  theme_minimal()
+fga_pts_18
+saveRDS(fga_pts_18, "fga_pts18.rds")
+
+tpa_fg <- ggplot(df, aes(x = fg3_pct, y = fga)) +
+  geom_point(color = "blue", size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "3-Point % vs Field Goal Attempts 2022",
+       x = "3-Point %", y = "Field Goal Attempts per Game") +
+  theme_minimal()
+tpa_fg
+saveRDS(tpa_fg, "tpa_fg.rds")
+
+fga_pts <- ggplot(df, aes(x = fga, y = pts_per_g)) +
+  geom_point(color = "darkgreen", size = 3) +
+   geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Field Goal Attempts vs Points per Game 2022",
+       x = "Field Goal Attempts per Game", y = "Points per Game") +
+  theme_minimal()
+fga_pts
+saveRDS(fga_pts, "fga_pts.rds")
 ```
 
 
