@@ -58,7 +58,7 @@ knitr::opts_chunk$set(echo = FALSE)
   - Blocks, Steals, Assists, Rebounds, Points, Minutes
 - Attempts
   - 3pt, Ft, Fg
-- Total
+- Totals
   - Games Played
 
 ## What We Notice from Season to Season
@@ -69,10 +69,9 @@ tibble1
 - Pace is down
 - Less turnovers
 - Rebounding is up
-- Smaller sample size
+- 3pa have skyrocketed
 
 ## Their Matrix
-#Add photo of thier graph
 ```{r, out.width="60%", fig.align="center"}
 knitr::include_graphics("images/originalmatrix400.jpg")
 ```
@@ -102,7 +101,6 @@ corr22
 The red squares are the least correlated statistics where as the green squares are highly correlated on a scale from -1 to 1.
 
 ### Strong Relationships:
-- can you add specific stats for 2018 and 2022 please tyler
 - PTS and FGA 
 - AST and PTS
 - REB and BLK
@@ -114,19 +112,19 @@ The red squares are the least correlated statistics where as the green squares a
 
 ## Differences between the Matrices
 
-* Many more highly correlated statistics in 2018 then in 2022
+* Many more highly correlated statistics in 2018 then in 2022, this could be due to how superstars have changed over time.
 
 ### Minutes per game
 - In 2018 minutes per game drove almost every stat (0.40 - 0.90)
 - In 2022 minutes per game correlations dropped to near 0 (0.04 - 0.40)
 
 - This means that performance is less dependent on which players play the most.
+- Lineups have become standardized as well as minutes
 
 
 
 
-
-##3-Point Attempts
+## 3-Point Attempts
 
 Points vs 3PA
 
@@ -134,6 +132,7 @@ Points vs 3PA
 
 * 2022 : 0.71
 
+- Why? The top scoring teams were more 3pt dominant (ex. Warriors)
 
 ## 3 Point Average vs Field Goal %
 
@@ -142,7 +141,7 @@ Points vs 3PA
 * 2018 -0.32
 * 2022 -0.29
 
-- In 2018, only high-usages players scored a lot of threes while in 2022, everybody has started to shoot threes -> less to seperate the elite scorers as much.
+- In 2018, only high-usages players scored a lot of threes while in 2022, everybody has started to shoot threes -> less to seperate the elite scorers as much thanks to the three point revolution.
 
 
 ## FG Attempts vs Scoring 
@@ -153,7 +152,7 @@ Points vs 3PA
 
 - In 2022, more teams rely on ball movement, effciency, and possession by possesion matchups more than just volume shooting.
 
-- This is a hint at the rise of heliocentric offenses like Luka and Jokic where raw shot attempts are replaced more by playmaking.
+- This is a hint at the rise of heliocentric offenses like Luka and Jokic where raw shot attempts are replaced more by playmaking. Lineups have shifted to distribution from one player rathen than funneling shots to one guy.
 
 
 ## Monte Carlo Simulation for League Stats
@@ -169,6 +168,15 @@ readRDS("corr_boot.rds")
 - The plot represents the most "average" correlation of the leagues stats.
 
 - How does this compare to the actual data we have?
+
+## Conclusion
+
+- The NBA is random, there will never be a combination of predictors that can explain the game.
+
+- Most correlations are obvious because they go hand in hand (ex. shooting and scoring)
+
+- Using correlation can highlight which facets of the game are most important to make adjustments to and how they would effect statistics.
+
 
 
 
