@@ -18,16 +18,37 @@ knitr::opts_chunk$set(echo = FALSE)
 - Quantify uncertainty using bootstrapping
 - Simulate season-to-season variability with Monte Carlo
 - Discuss important stats and features of the leauge that would lead to differing correlations across seasons.
+- Discuss Monte Carlo distributions of NBA stats 
 
 ##  Data and Methods
 
-* **Dataset:** Top 15 NBA players (2018/2022 season stats)
-* **Goal:** Understand relationships between NBA performance metrics
+* **Dataset:** Top 15 NBA players (2018/2022 season stats) 
+
+- Small dataset makes bootstrapping useful for determining uncertanity
+
+* **Goal:** Understand relationships between NBA performance metrics using correlation matrices
+
 
 ###  Methods Used
-* Correlation analysis
-* Bootstrap confidence intervals
-* Monte Carlo simulation of correlation matrices
+- Correlation analysis (visualized using heatmaps)
+
+- Bootstrap resampling to estimate variability in correlations
+
+- Monte Carlo simulation to assess stability of correlation matrices
+
+- Bootstrap confidence intervals for predicted MVP scores
+
+
+## Motivation
+- Why do this study?
+
+- What is special about the 2018 and 2022 seasons?
+
+- Some NBA stats are very correlated others are not very correlated
+
+- Most MVP discussions often rely on a "eye test" + incomplete narratives so prediction becomes difficult for MVP status
+
+- Some statistics are very important to some positions, no so much to others.
 
 
 ## Introduction to Basic Stats
@@ -52,67 +73,102 @@ tibble1
 
 ## Their Matrix
 #Add photo of thier graph
+```{r, out.width="60%", fig.align="center"}
+knitr::include_graphics("images/originalmatrix400.jpg")
+```
+
+## Original Study
+- The original study in the paper we chose created this correlation matrix using a machine learning model to predict MVP points. 
+
+- We recreated a version of this matrix using pearson correlations, and simplified the overall study that they performed while taking on the task of comparing these correlations ans how they change from season to season.
+
+- Correlation gives a quantitative view of NBA stat relationships -> then test stability using Monte Carlo and Bootstrapping
 
 ## Replicated Correlation Matrix from 2018 season
-```{r, fig.width=8, fig.height=4.5, fig.align='center'}
+```{r, fig.width=10, fig.height=4.5, fig.align='center'}
 corr18 <- readRDS("corr18.rds")
-print(corr18)
+corr18
+
 ```
 
 
 ## Replicated Correlation Matrix from 2022 season
-```{r, fig.width=8, fig.height=4.5, fig.align='center'}
-corr1 <- readRDS("corr1.rds")
-print(corr1)
+```{r, fig.width=10, fig.height=4.5, fig.align='center'}
+corr22 <- readRDS("corr22.rds")
+corr22
 ```
 
-## Statistics to Note from Matrix:
+## Statistics to Note from Matrices:
 The red squares are the least correlated statistics where as the green squares are highly correlated on a scale from -1 to 1.
 
 ### Strong Relationships:
-- PTS and FGA
+- can you add specific stats for 2018 and 2022 please tyler
+- PTS and FGA 
 - AST and PTS
 - REB and BLK
 
 ### Weak relationships
-- FT% and every other statistic
+- FT% and most other statistics
+
+- Correlations may change based on position
+
+## Differences between the Matrices
+
+* Many more highly correlated statistics in 2018 then in 2022
+
+### Minutes per game
+- In 2018 minutes per game drove almost every stat (0.40 - 0.90)
+- In 2022 minutes per game correlations dropped to near 0 (0.04 - 0.40)
+
+- This means that performance is less dependent on which players play the most.
 
 
-Maybe talk about why correlations would vary based on position on team
 
 
-## Bootstrapping Correlations
-Include bootstrap plot,
-Table of CI's
 
-Plot Ideas:
+##3-Point Attempts
 
-Simulated Correlation Histogram
+Points vs 3PA
 
-Example: distribution of PTS–FGA correlation over 10,000 fake seasons.
+* 2018: 0.91
 
-Simulated Average Correlation Matrix vs Real Matrix
+* 2022 : 0.71
 
-Two heatmaps side by side
 
-Shows how robust the relationships are
+## 3 Point Average vs Field Goal %
 
-Monte Carlo Variability Plot
+3PA vs FG%
 
-For each stat pair, plot SD of simulated correlations
+* 2018 -0.32
+* 2022 -0.29
 
-Identifies stable vs unstable relationships
+- In 2018, only high-usages players scored a lot of threes while in 2022, everybody has started to shoot threes -> less to seperate the elite scorers as much.
 
-Talking points (3 minutes):
 
-Motivate Monte Carlo: “What if the NBA played 10,000 alternate versions of the season?”
+## FG Attempts vs Scoring 
 
-Show that some correlations barely change (PTS–FGA), meaning they're structural
+- 2018: FGA vs PTS = 0.91
 
-Show that some vary a lot (STL–BLK), meaning they're noisy
+- 2022: FGA vs PTS = 0.71
 
-Explain the multivariate normal model used
+- In 2022, more teams rely on ball movement, effciency, and possession by possesion matchups more than just volume shooting.
 
-Mention how this method is used in real sports analytics
+- This is a hint at the rise of heliocentric offenses like Luka and Jokic where raw shot attempts are replaced more by playmaking.
 
-This section alone can easily take 4–5 minutes if needed.
+
+## Monte Carlo Simulation for League Stats
+
+```{r}
+readRDS("corr_boot.rds")
+```
+
+## Monte Carlo for Leauge Stats
+
+- This plot gives very smooth league averages for all of the stats in our dataset.
+
+- The plot represents the most "average" correlation of the leagues stats.
+
+- How does this compare to the actual data we have?
+
+
+

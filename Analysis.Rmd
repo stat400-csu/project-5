@@ -82,6 +82,58 @@ var_labels <- c(
 )
 ```
 
+
+## Some standard plots for visualization (2022 season)
+
+```{r}
+df <- read.csv("all_nba_2022.csv")
+
+mean_stats <- df %>%
+  select(-namePlayer, -all_nba_team) %>%
+  summarise(across(everything(), \(x) mean(x, na.rm = TRUE))) %>%
+  pivot_longer(cols = everything(),
+               names_to = "stat",
+               values_to = "mean_value")
+mean_stats
+
+mean_stats_plot <- ggplot(mean_stats, aes(x = reorder(stat, mean_value), y = mean_value)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Mean Values of Player Statistics",
+       x = "Statistic",
+       y = "Mean") +
+  theme_minimal()
+mean_stats_plot
+saveRDS(mean_stats_plot, "mean_stats_plot.rds")
+
+
+
+
+PTS3PA_18 <- ggplot(df_18, aes(x = fg3a, y = pts_per_g, se = FALSE)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Points vs 3PA (2018)",
+       subtitle = "Correlation = 0.91",
+       x = "3-Point Attempts per Game",
+       y = "Points per Game") +
+  theme_minimal()
+PTS3PA_18
+saveRDS(PTS3PA_18, "PTS3PA_18.rds")
+
+
+PTS3PA_22 <- ggplot(df, aes(x = fg3a, y = pts_per_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Points vs 3PA (2022)",
+       subtitle = "Correlation = 0.71",
+       x = "3-Point Attempts per Game",
+       y = "Points per Game") +
+  theme_minimal()
+PTS3PA_22
+saveRDS(PTS3PA_22, "PTS3PA_22.rds")
+```
+
+
 ## Creating Standard Correlations
 ```{r}
 
@@ -146,7 +198,6 @@ saveRDS(corr18, "corr18.rds")
 ```
 
 ```{r}
-##Replication of Study
 
 ##Confusion and Correlation Matrices using Bootstrapping
 
@@ -195,6 +246,8 @@ avg_cm <- Reduce("+", conf_matrices) / B
 
 
 print(avg_cm)
+
+saveRDS(avg_cm, "avg_cm.rds")
 ```
 
 
@@ -227,7 +280,7 @@ corr_melt <- reshape2::melt(avg_corr)
 
 
 # Plot bootstrapped average correlation matrix
-ggplot(corr_melt, aes(Var1, Var2, fill = value)) +
+corr_boot <- ggplot(corr_melt, aes(Var1, Var2, fill = value)) +
   geom_tile(color = "white") +
   geom_text(aes(label = sprintf("%.2f", value)), size = 3) +
   scale_fill_gradient2(low = "#d73027", mid = "#fee08b", high = "#1a9850",
@@ -242,6 +295,10 @@ ggplot(corr_melt, aes(Var1, Var2, fill = value)) +
     axis.title.y = element_blank()
   ) +
   labs(title = "Bootstrapped Average Correlation Matrix", fill = "Corr")
+
+corr_boot
+
+saveRDS(corr_boot, "corr_boot.rds")
 ```
 
 ```{r}
@@ -319,71 +376,20 @@ mc_summary[[paste0("mean_", stat)]][i] <- mean(sim_data[[stat]])
 library(reshape2)
 mc_melt <- melt(mc_summary, id.vars = "iteration")
 
-ggplot(mc_melt, aes(x = value)) +
+mc_avg <- ggplot(mc_melt, aes(x = value)) +
 geom_histogram(bins = 30, fill = "#1a9850", color = "white") +
 facet_wrap(~variable, scales = "free_x") +
 labs(title = "Monte Carlo Distributions of Average Player Stats",
 x = "Simulated Average Value", y = "Frequency")
 
+mc_avg
+
+saveRDS(mc_avg, "mc_avg.rds")
 ```
-Leauge Level Averages
+Leauge Level Averages for NBA stats from a bootstrapped sample of the top 15 players
 
 
 
-## Replicating the MVP Ranking with Linear Regression
-Rank 1 → 10 points
-
-Rank 2 → 7 points
-
-Rank 3 → 5 points
-
-Rank 4 → 3 points
-
-Rank 5 → 1 point
-
-Rank 6–15 → 0 points
-
-```{r}
-df <- read_csv("all_nba_2022.csv")
-
-head(df)
-
-
-df <- df %>% 
-  arrange(desc(pts_per_g)) %>%
-  mutate(rank = row_number())
-df <- df %>%
-  mutate(points = case_when(
-    rank == 1 ~ 10,
-    rank == 2 ~ 7,
-    rank == 3 ~ 5,
-    rank == 4 ~ 3,
-    rank == 5 ~ 1,
-    TRUE ~ 0
-  ))
-    
-
-mvp_model <- lm(points ~ pts_per_g + trb_per_g + ast_per_g, data = df)
-
-summary(mvp_model)
-
-
-
-df <- df %>%
-  mutate(predicted_points = predict(mvp_model, newdata = df)) %>%
-  arrange(desc(predicted_points))
-
-df %>% select(namePlayer, rank, points, predicted_points)
-
-
-ggplot(df, aes(x = points, y = predicted_points, label = namePlayer)) + geom_point(color = "forestgreen", size = 3) + 
-  geom_text(nudge_y = 0.5) +
-  labs(title = "Predicted vs Proxy MVP Points (Ranked by PTS per Game)",
-       x = "Assigned Points (from Rank)",
-       y = "Predicted Points") +
-  theme_minimal()
-       
-```
 ## Bootstrap Predicted MVP Points with 95% CI
 ```{r}
 
@@ -447,10 +453,15 @@ pred_summary <- tibble(
 ) %>%
   arrange(desc(avg_pred))
 
-pred_summary
+boot_predSummary <- pred_summary
 
 
-ggplot(pred_summary, aes(x = actual_points, y = avg_pred, label = player)) +
+boot_predSummary
+
+saveRDS(boot_predSummary, "boot_predSummary.rds")
+
+
+boot_predMVP <- ggplot(pred_summary, aes(x = actual_points, y = avg_pred, label = player)) +
   geom_point(color = "forestgreen", size = 3) +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = "grey50") +
   geom_text_repel(size = 3) +
@@ -461,4 +472,5 @@ ggplot(pred_summary, aes(x = actual_points, y = avg_pred, label = player)) +
   ) +
   theme_minimal()
 
+saveRDS(boot_predMVP, "boot_predMVP.rds")
 ```
