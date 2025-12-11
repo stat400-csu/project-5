@@ -3,7 +3,7 @@ Group 1 Project for STAT400 @ CSU
 
 Required Libraries to install (in console)
 1. remotes
-2. kintr
+2. knitr
 3. dplyr
 4. nbastatR (remotes::install_github("abresler/nbastatR"))
 5. tidyverse
@@ -17,8 +17,8 @@ Required Libraries to install (in console)
 13. kableExtra
 
 Steps to Reproduce
-1. Run Datascrape.Rmd (run all)
-2. Run Analysis.Rmd (run all)
-3. Load images folder
-4. Run Presentation STAT400.Rmd (knit to pdf)
-5. STAT 400 Paper.Rmd (knit to pdf)
+1. Run "datascrape.Rmd" (run all)
+2. Run "Analysis.Rmd" (run all)
+3. Load "images" folder
+4. Run "Presentation STAT400.Rmd" (knit to pdf)
+5. Run "STAT 400 Paper.Rmd" (knit to pdf)
