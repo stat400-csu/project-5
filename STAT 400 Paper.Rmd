@@ -1,13 +1,12 @@
 ---
 title: "Using a Confusion Matrix to Predict All-NBA Teams"
 output: pdf_document
+author: "Ethan Schilling, Ivan Shokhrin, and Tyler Manuello"
 date: "2025-12-17"
 editor_options: 
   markdown: 
     wrap: sentence
 ---
-
-# Using a Confusion Matrix to Predict All-NBA Teams
 
 ## Abstract
 
@@ -26,7 +25,7 @@ Among the players on the All-NBA 1st Team is the NBA MVP. The MVP, also voted on
 In attempts to try to use advanced statistics to quantify what specifically helped MVPs become MVPs, basketball statistician Daniel Bratulić constructed a confusion matrix to attempt to see which variables were the most correlated, in order to help predict which players would have a higher likelihood of winning MVP based on their advanced statistics from a given list, as can be seen below.
 
 ```{r}
-
+knitr::include_graphics("images/originalmatrix400.jpg")
 ```
 
 Listed below is a brief overview of these terms and how they are found.
@@ -64,7 +63,10 @@ Although the paper makes some other mention of Monte Carlo methods, this was fou
 The first set of correlation matrices that may be considered are the regular one, pulled directly from the 2022 All-NBA players’ data, and comparing that to that of the recreation of Bratulić’s 2018 NBA MVP matrix.
 
 ```{r}
-
+corr18 <- readRDS("corr18.rds")
+corr18
+corr22 <- readRDS("corr22.rds")
+corr22
 ```
 
 Looking at the regular 2022 All-NBA confusion matrix, it may be observed that the counting stats that are strongest correlated with one another are blocks per game with total rebounds per game, which indicates that All-NBA players that would block shots frequently were more likely to come down with rebounds, points per game with both field goal and free throw attempts, which can be expected of field goal attempts, as a player who shoots the ball more is more likely to score, but less of free throw attempts, as this seems to indicate a supposed trend within the NBA fandom that players have “gotten softer”, and are more likely to attempt more shots from the free throw line due to drawing more fouls.
@@ -80,22 +82,14 @@ This may be explained by multiple factors, such as changing shooting trends in 2
 Next, the bootstrap model’s matrix may be considered.
 
 ```{r}
-
+boot_corr <- readRDS("corr_boot.rds")
+boot_corr
 ```
 
 This matrix is found to have relatively similar extreme values to the normal 2022 correlation matrix, but the main notable difference is that, interestingly, it appears that most of the highest correlation values have almost been “smoothed out”, and their correlation values appear to have become less extreme.
 The main few that were high for the regular model stayed high as mentioned before, as well as total rebounds with field goal percentage entering the conversation.
 This may be explained quite simply by the fact that players who tend to pull down rebounds are the bigger players that play on the interior (within the painted area of the court), and those players tend to attempt the higher percentage shots, with low interior layups opposed to three-pointers.
 Although the same trends are observed in this model and matrix compared to the one based directly on the data from the 2022 season, a bootstrap with 2000 samples is found to decrease correlation values, interestingly.
-
-Finally, the matrix that uses bootstrapped sampling with Monte Carlo averages is considered.
-
-```{r}
-
-```
-
-This matrix, as can be expected, is found to be quite similar to the regular bootstrapped matrix, with its differences being within the hundredths of correlation values.
-Using Monte Carlo methods, although greatly effective in many applications, have little effect on correlations when specifically finding means on our bootstrapped data.
 
 Overall, the trends it observes, as can be inferred, are that bigger All-NBA players that come down with more rebounds are more likely to block shots and have higher field goal percentages due to their shot diets containing higher percentage shots.
 Players that steal the ball the most are the least likely to be offensively inclined, compared to shot blockers, who are more likely to chip in to some offense.
