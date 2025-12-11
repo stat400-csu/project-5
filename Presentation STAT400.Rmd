@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = FALSE)
 - Recreate Heatmapped Correlation Matrix from the article "A Hybrid Machine Learning Model for Predicting USA NBA All-Stars"
 - Quantify uncertainty using bootstrapping
 - Simulate season-to-season variability with Monte Carlo
-- Discuss important stats and features of the leauge that would lead to differing correlations across seasons.
+- Discuss important stats and features of the league that would lead to differing correlations across seasons.
 - Discuss Monte Carlo distributions of NBA stats 
 
 ##  Data and Methods
