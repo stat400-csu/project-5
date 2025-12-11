@@ -8,6 +8,23 @@ editor_options:
     wrap: sentence
 ---
 
+```{r, echo=FALSE, message=FALSE}
+suppressPackageStartupMessages({
+library(tidyverse)
+library(data.table)
+library(caret)
+library(RColorBrewer)
+library(ggplot2)
+library(ggrepel)
+library(nnet)
+library(dplyr)
+library(reshape2)
+library(knitr)
+library(kableExtra)
+set.seed(400)
+})
+```
+
 ## Abstract
 
 A large part of athletics, throughout their history, have surrounded recognition.
